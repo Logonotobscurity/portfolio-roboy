@@ -35,7 +35,7 @@ const initiatives: Initiative[] = [
 export function CulturalImpact() {
   return (
     <div className="relative overflow-hidden rounded-3xl bg-black/50 p-8 backdrop-blur-sm">
-      <PatternOverlay variant="adinkra" className="opacity-5" />
+      <PatternOverlay variant="kente" className="opacity-5" />
       
       <div className="relative space-y-12">
         <div className="text-center">

@@ -22,7 +22,6 @@ const fashionItems = [
 
 export function FashionStyleSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true });
 
   return (
     <div ref={sectionRef} className="container mx-auto px-4">

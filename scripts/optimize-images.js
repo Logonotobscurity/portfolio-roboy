@@ -15,13 +15,35 @@ async function ensureDirectoryExists(filePath) {
   }
 }
 
+async function isGitLFSFile(filePath) {
+  try {
+    const content = await fs.readFile(filePath, 'utf8');
+    return content.toString().startsWith('version https://git-lfs.github.com/spec/');
+  } catch (error) {
+    console.warn(`Warning: Could not check if ${filePath} is a Git LFS file:`, error.message);
+    return false;
+  }
+}
+
 async function optimizeImage(inputPath) {
   try {
+    // Check if the file is a Git LFS pointer
+    const isLFS = await isGitLFSFile(inputPath);
+    if (isLFS) {
+      console.log(`⚠️ Skipping LFS file: ${path.basename(inputPath)}`);
+      return;
+    }
+
     const outputPath = inputPath;
     await ensureDirectoryExists(outputPath);
     
-    const image = sharp(inputPath);
+    const image = sharp(inputPath, { failOnError: false });
     const metadata = await image.metadata();
+
+    if (!metadata) {
+      console.warn(`⚠️ Could not read metadata for ${path.basename(inputPath)}`);
+      return;
+    }
 
     // Only resize if image is larger than MAX_WIDTH
     if (metadata.width > MAX_WIDTH) {
@@ -30,21 +52,30 @@ async function optimizeImage(inputPath) {
 
     // Create optimized buffer based on image type
     let buffer;
-    if (metadata.format === 'jpeg' || metadata.format === 'jpg') {
-      buffer = await image.jpeg({ quality: QUALITY, mozjpeg: true }).toBuffer();
-    } else if (metadata.format === 'png') {
-      buffer = await image.png({ quality: QUALITY, compressionLevel: 9 }).toBuffer();
-    } else if (metadata.format === 'webp') {
-      buffer = await image.webp({ quality: QUALITY }).toBuffer();
-    }
+    const format = metadata.format?.toLowerCase();
+    
+    try {
+      if (format === 'jpeg' || format === 'jpg') {
+        buffer = await image.jpeg({ quality: QUALITY, mozjpeg: true }).toBuffer();
+      } else if (format === 'png') {
+        buffer = await image.png({ quality: QUALITY, compressionLevel: 9 }).toBuffer();
+      } else if (format === 'webp') {
+        buffer = await image.webp({ quality: QUALITY }).toBuffer();
+      } else {
+        console.warn(`⚠️ Unsupported format ${format} for ${path.basename(inputPath)}`);
+        return;
+      }
 
-    // Write the optimized buffer to file
-    if (buffer) {
-      await fs.writeFile(outputPath, buffer);
-      console.log(`✓ Optimized ${path.basename(inputPath)}`);
+      // Write the optimized buffer to file
+      if (buffer) {
+        await fs.writeFile(outputPath, buffer);
+        console.log(`✓ Optimized ${path.basename(inputPath)}`);
+      }
+    } catch (error) {
+      console.warn(`⚠️ Failed to optimize ${path.basename(inputPath)}:`, error.message);
     }
   } catch (error) {
-    console.error(`✗ Failed to optimize ${inputPath}:`, error.message);
+    console.warn(`⚠️ Error processing ${path.basename(inputPath)}:`, error.message);
   }
 }
 
@@ -53,12 +84,20 @@ async function optimizeImages() {
     const images = await glob('public/**/*.{jpg,jpeg,png,webp}');
     console.log(`Found ${images.length} images to optimize`);
 
-    await Promise.all(images.map(image => optimizeImage(image)));
-    console.log('\nImage optimization complete! ✨');
+    // Process images sequentially to avoid memory issues
+    for (const image of images) {
+      await optimizeImage(image).catch(error => {
+        console.warn(`⚠️ Failed to process ${image}:`, error.message);
+      });
+    }
+    
+    console.log('\n✨ Image optimization complete!');
   } catch (error) {
-    console.error('Error optimizing images:', error);
-    process.exit(1);
+    console.error('❌ Error during image optimization:', error.message);
+    // Don't exit with error code to prevent build failure
+    console.log('\n⚠️ Continuing build despite optimization errors');
   }
 }
 
+// Run the optimization
 optimizeImages(); 

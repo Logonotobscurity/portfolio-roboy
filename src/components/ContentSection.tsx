@@ -55,10 +55,10 @@ export function ContentSection({
         >
           <ChapterHeading
             title={title}
-            subtitle={subtitle}
+            subtitle={subtitle ?? ""}
             pattern={pattern}
-            LeftIcon={LeftIcon}
-            RightIcon={RightIcon}
+            {...(LeftIcon && { LeftIcon })}
+            {...(RightIcon && { RightIcon })}
             variant="gradient"
           />
           <div className="mt-8 md:mt-12">

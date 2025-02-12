@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
+// Add debounce utility
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
 interface ImageData {
   src: string;
   alt: string;
@@ -30,9 +42,11 @@ export function MasonryGrid({ images, onImageClick, grayscaleImages = [] }: Maso
       else setColumns(3);
     }
 
-    updateColumns();
-    window.addEventListener('resize', updateColumns);
-    return () => window.removeEventListener('resize', updateColumns);
+    const debouncedUpdateColumns = debounce(updateColumns, 250);
+
+    updateColumns(); // Initial call
+    window.addEventListener('resize', debouncedUpdateColumns);
+    return () => window.removeEventListener('resize', debouncedUpdateColumns);
   }, []);
 
   const getColumns = () => {
