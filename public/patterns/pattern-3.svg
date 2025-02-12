@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M150 0L300 75L150 150L0 75L150 0Z" fill="url(#paint0_linear)"/>
+  <path d="M150 75L300 150L150 225L0 150L150 75Z" fill="url(#paint1_linear)"/>
+  <path d="M150 150L300 225L150 300L0 225L150 150Z" fill="url(#paint2_linear)"/>
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="300" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="paint1_linear" x1="0" y1="75" x2="300" y2="225" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="paint2_linear" x1="0" y1="150" x2="300" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg> 

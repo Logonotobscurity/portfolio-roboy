@@ -1,0 +1,46 @@
+name: Image Optimization
+
+on:
+  push:
+    paths:
+      - 'public/images/**'
+      - 'public/*.png'
+      - 'public/*.jpg'
+      - 'public/*.ico'
+  pull_request:
+    paths:
+      - 'public/images/**'
+      - 'public/*.png'
+      - 'public/*.jpg'
+      - 'public/*.ico'
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Optimize Images
+      uses: calibreapp/image-actions@main
+      with:
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        jpegQuality: '80'
+        pngQuality: '80'
+        ignorePaths: 'node_modules/**,build/**,dist/**'
+        compressOnly: true
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'chore: optimize images'
+        title: '🗜️ Optimize images'
+        body: |
+          Image optimization applied to reduce file sizes while maintaining quality.
+          
+          This PR was automatically created by the Image Optimization workflow.
+        branch: optimize-images
+        labels: |
+          optimization
+          automated pr 
