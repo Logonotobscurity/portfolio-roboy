@@ -1,10 +1,9 @@
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import type { HTMLMotionProps, MotionStyle, Transition, Variants } from 'framer-motion';
-import { createContext, useContext, useId, useRef, useState, useMemo, useCallback } from 'react';
+import { createContext, useContext, useId, useRef, useState, useMemo } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { cn } from '@/lib/utils';
 import { XIcon } from 'lucide-react';
-import clsx from 'clsx';
 
 interface DialogContextType {
   isOpen: boolean;

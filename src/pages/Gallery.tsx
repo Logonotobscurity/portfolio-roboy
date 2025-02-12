@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlitchText } from '../components/GlitchText';
-import { PatternOverlay } from '../components/PatternOverlay';
 import { X, Camera, Award, Heart, Mic, Star, Users, Sparkles } from 'lucide-react';
 import { MasonryGrid } from '../components/MasonryGrid';
 
@@ -285,28 +284,22 @@ function HeroSection() {
   );
 }
 
-const categoryIcons = {
-  'Featured': Star,
-  'Events': Mic,
-  'Fashion': Camera,
-  'Brands': Sparkles,
-  'MC': Users,
-  'Entertainment': Heart,
-  'Awards': Award,
-  'Philanthropy': Heart
-};
-
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null);
-  const [filteredImages, setFilteredImages] = useState(galleryImages);
-
-  useEffect(() => {
-    const filtered = selectedCategory === 'all'
+  
+  // Memoize filtered images
+  const filteredImages = useMemo(() => 
+    selectedCategory === 'all'
       ? galleryImages
-      : galleryImages.filter(img => img.category === selectedCategory);
-    setFilteredImages(filtered);
-  }, [selectedCategory]);
+      : galleryImages.filter(img => img.category === selectedCategory),
+    [selectedCategory]
+  );
+
+  // Memoize image click handler
+  const handleImageClick = useCallback((image: typeof galleryImages[0]) => {
+    setSelectedImage(image);
+  }, []);
 
   return (
     <div className="min-h-screen bg-retro-black text-retro-white">
@@ -340,7 +333,7 @@ export default function Gallery() {
         <div className="container mx-auto">
           <MasonryGrid
             images={filteredImages}
-            onImageClick={setSelectedImage}
+            onImageClick={handleImageClick}
             grayscaleImages={GRAYSCALE_IMAGES}
           />
         </div>

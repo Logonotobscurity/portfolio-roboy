@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import {
-  Dialog,
   DialogTrigger,
   DialogContainer,
   DialogContent,
@@ -10,6 +9,7 @@ import {
   DialogDescription,
   DialogImage,
 } from './Dialog';
+import { Dialog } from 'node_modules/@radix-ui/react-dialog/dist';
 
 const portfolioItems = [
   {
@@ -89,7 +89,7 @@ export function PortfolioSection() {
 
             <DialogContainer>
               <DialogContent className="bg-black/95 text-white rounded-xl overflow-hidden max-w-4xl w-[95vw] relative">
-                <DialogClose className="absolute right-4 top-4 z-10" />
+                <DialogClose className="absolute right-4 top-4 z-10" children={undefined} />
                 <div className="grid md:grid-cols-2 gap-8">
                   <DialogImage
                     src={item.image}
