@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0H100V100H0V0Z" fill="url(#paint0_linear)"/>
+  <path d="M100 100H200V200H100V100Z" fill="url(#paint1_linear)"/>
+  <path d="M200 200H300V300H200V200Z" fill="url(#paint2_linear)"/>
+  <path d="M200 0H300V100H200V0Z" fill="url(#paint3_linear)"/>
+  <path d="M0 200H100V300H0V200Z" fill="url(#paint4_linear)"/>
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="paint1_linear" x1="100" y1="100" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="paint2_linear" x1="200" y1="200" x2="300" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="paint3_linear" x1="200" y1="0" x2="300" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="paint4_linear" x1="0" y1="200" x2="100" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg> 
