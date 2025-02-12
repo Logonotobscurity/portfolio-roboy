@@ -29,7 +29,7 @@ export function GlitchText({ text, className = '' }: GlitchTextProps) {
       </motion.span>
       <motion.span
         className="absolute top-0 left-0 text-cyan-400 mix-blend-screen"
-        style={{ clipPath: 'inset(10% 0 90% 0)' }}
+        style={{ clipPath: "inset(10% 0 90% 0)" } as React.CSSProperties}
         animate={{
           x: [-1, 1, -1],
           opacity: [0.5, 0.8, 0.5],
@@ -44,7 +44,7 @@ export function GlitchText({ text, className = '' }: GlitchTextProps) {
       </motion.span>
       <motion.span
         className="absolute top-0 left-0 text-red-400 mix-blend-screen"
-        style={{ clipPath: 'inset(80% 0 10% 0)' }}
+        style={{ clipPath: 'inset(80% 0 10% 0)' } as React.CSSProperties}
         animate={{
           x: [1, -1, 1],
           opacity: [0.5, 0.8, 0.5],
