@@ -1,0 +1,12 @@
+# Sentry
+VITE_SENTRY_DSN=your-sentry-dsn
+
+# API URLs
+VITE_API_URL=http://localhost:3000
+
+# Feature Flags
+VITE_ENABLE_ANALYTICS=true
+VITE_ENABLE_ERROR_TRACKING=true
+
+# Build
+ANALYZE=false 

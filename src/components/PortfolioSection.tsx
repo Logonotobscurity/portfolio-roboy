@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import {
   Dialog,
@@ -37,7 +37,6 @@ const portfolioItems = [
 
 export function PortfolioSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true });
 
   return (
     <div ref={sectionRef} className="container mx-auto px-4">
