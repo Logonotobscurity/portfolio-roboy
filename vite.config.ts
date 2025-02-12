@@ -16,8 +16,7 @@ export default defineConfig(({ mode }) => ({
         ],
         babelrc: false,
         configFile: false,
-      },
-      fastRefresh: true,
+      }
     }),
     mode === 'production' && visualizer({
       open: true,
@@ -113,14 +112,12 @@ export default defineConfig(({ mode }) => ({
     }
   },
   server: {
-    port: 5173,
+    port: 3000,
     strictPort: true,
     host: true,
     open: false,
     hmr: {
-      overlay: true,
-      clientPort: 5173,
-      timeout: 120000,
+      overlay: true
     }
   },
   preview: {
