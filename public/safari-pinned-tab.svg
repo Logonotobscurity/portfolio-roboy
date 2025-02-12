@@ -1,18 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" fill="#ffffff"/>
-  <g>
-    <!-- Background Circle -->
-    <circle cx="256" cy="256" r="240" fill="#000000"/>
-    
-    <!-- ROO Text -->
-    <text x="256" y="300" 
-          font-family="Arial Black, sans-serif" 
-          font-size="140" 
-          font-weight="bold" 
-          text-anchor="middle" 
-          fill="#ffffff">
+<svg aria-hidden="true" viewBox="0 0 512 512" role="img" focusable="false"><path fill="currentColor" d="M0 0h512v512H0z"/><circle cx="256" cy="256" r="240"/><text x="256" y="300" fill="currentColor" font-family="Arial Black, sans-serif" font-size="140" font-weight="bold" text-anchor="middle">
       ROO
-    </text>
-  </g>
-</svg> 
+    </text></svg>

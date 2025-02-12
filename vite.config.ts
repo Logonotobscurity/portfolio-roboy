@@ -6,7 +6,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/',
+  base: process.env.NODE_ENV === 'production' ? '/portfolio%20Roboy/' : '/',
   plugins: [
     react({
       jsxRuntime: 'automatic',
@@ -61,22 +61,9 @@ export default defineConfig(({ mode }) => ({
           }
         },
         format: 'es',
-        assetFileNames: (assetInfo) => {
-          const info = assetInfo?.name ?? '';
-          const extType = info.split('.').at(1) ?? '';
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-            return 'assets/images/[name]-[hash][extname]';
-          }
-          if (/woff|woff2|ttf|otf|eot/i.test(extType)) {
-            return 'assets/fonts/[name]-[hash][extname]';
-          }
-          if (/css/i.test(extType)) {
-            return 'assets/css/[name]-[hash][extname]';
-          }
-          return 'assets/[name]-[hash][extname]';
-        },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js'
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js'
       }
     },
     sourcemap: mode !== 'production',
