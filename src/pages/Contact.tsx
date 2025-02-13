@@ -78,9 +78,8 @@ export default function Contact() {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
-
   return (
-    <div className="min-h-screen bg-retro-black text-retro-white">
+    <main className="min-h-screen bg-retro-black text-retro-white">
       {/* Hero Section with Background Image */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">

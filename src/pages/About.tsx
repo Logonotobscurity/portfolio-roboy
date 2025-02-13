@@ -1,3 +1,6 @@
+/// <reference types="react" />
+
+import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   Mail, Phone, MapPin, Globe, 
@@ -148,7 +151,9 @@ export default function About() {
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            <ChevronDown className="w-8 h-8 text-white/60" />
+            <div className="icon-wrapper">
+              <ChevronDown />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -174,7 +179,9 @@ export default function About() {
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         className="bg-primary/10 p-3 rounded-full mb-3"
                       >
-                        <stat.icon className="h-6 w-6 text-primary" />
+                        <div className="icon-wrapper">
+                          {stat.icon}
+                        </div>
                       </motion.div>
                       <h3 className="font-display text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white">
                         {stat.label}
@@ -196,20 +203,22 @@ export default function About() {
                 >
                   <RetroCard className="w-56 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 transform hover:-translate-y-1">
                     <div className="flex flex-col items-center text-center p-4">
-              <motion.div
+                      <motion.div
                         whileHover={{ scale: 1.1, rotate: -5 }}
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         className="bg-primary/10 p-3 rounded-full mb-3"
                       >
-                        <stat.icon className="h-6 w-6 text-primary" />
+                        <div className="icon-wrapper">
+                          {stat.icon}
+                        </div>
                       </motion.div>
                       <h3 className="font-display text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white">
                         {stat.label}
                       </h3>
-                  </div>
-                </RetroCard>
-              </motion.div>
-            ))}
+                    </div>
+                  </RetroCard>
+                </motion.div>
+              ))}
             </Marquee>
           </div>
         </div>
@@ -579,7 +588,9 @@ export default function About() {
                   className="group"
                 >
                   <div className="flex items-center space-x-3 p-3 rounded-lg bg-black/20 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300">
-                    <item.icon className="h-5 w-5 text-primary transform group-hover:scale-110 transition-transform duration-300" />
+                    <div className="icon-wrapper">
+                      {item.icon}
+                    </div>
                     <div>
                       <h3 className="font-display text-sm font-bold mb-0.5">{item.title}</h3>
                       {item.href ? (
@@ -603,46 +614,18 @@ export default function About() {
             {/* Social Icons */}
             <div className="mt-6 border-t border-primary/10 pt-6 px-6">
               <div className="flex justify-center space-x-8">
-                <motion.a
-                  href="https://instagram.com/rooboy_"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-gray-400 hover:text-primary transition-colors duration-300"
-                >
-                  <Instagram className="w-6 h-6" />
-                </motion.a>
-                <motion.a
-                  href="https://twitter.com/rooboy_"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-gray-400 hover:text-primary transition-colors duration-300"
-                >
-                  <Twitter className="w-6 h-6" />
-                </motion.a>
-                <motion.a
-                  href="https://facebook.com/rooboyofficial"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-gray-400 hover:text-primary transition-colors duration-300"
-                >
-                  <Facebook className="w-6 h-6" />
-                </motion.a>
-                <motion.a
-                  href="https://linkedin.com/in/rooboy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-gray-400 hover:text-primary transition-colors duration-300"
-                >
-                  <Linkedin className="w-6 h-6" />
-                </motion.a>
+                <div className="icon-wrapper">
+                  <Instagram />
+                </div>
+                <div className="icon-wrapper">
+                  <Twitter />
+                </div>
+                <div className="icon-wrapper">
+                  <Facebook />
+                </div>
+                <div className="icon-wrapper">
+                  <Linkedin />
+                </div>
               </div>
               <p className="text-center text-gray-400 text-sm mt-4">
                 © {new Date().getFullYear()} RooBoy. All rights reserved.
