@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": "20.x",
-    "npm": "10.x"
+    "node": ">=20.x",
+    "npm": ">=10.x"
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run optimize-images && npm run generate-svg-sprite && tsc && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
@@ -21,9 +21,10 @@
     "prepare": "npm run optimize-images",
     "generate-favicons": "node scripts/generate-favicons.cjs",
     "optimize-images": "node scripts/optimize-images.js",
+    "optimize-media": "node scripts/optimize-media.js",
     "generate-svg-sprite": "node scripts/generate-svg-sprite.js",
-    "prebuild": "npm run optimize-images && npm run generate-svg-sprite",
-    "vercel-build": "npm run optimize-images && npm run generate-svg-sprite && npm run build"
+    "optimize": "npm run optimize-media && npm run generate-svg-sprite",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.7",
@@ -36,13 +37,13 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.2",
-    "sharp": "^0.33.5",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.26.8",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/container-queries": "^0.1.1",
@@ -68,6 +69,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "fluent-ffmpeg": "^2.1.2",
     "glob": "^11.0.1",
     "husky": "^9.0.11",
     "jsdom": "^24.0.0",
@@ -76,6 +78,7 @@
     "postcss-nesting": "^12.0.2",
     "prettier": "^3.2.5",
     "rollup-plugin-visualizer": "^5.12.0",
+    "sharp": "^0.33.5",
     "svgo": "^3.3.2",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",

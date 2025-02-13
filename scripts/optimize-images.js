@@ -137,8 +137,8 @@ async function generateOptimizedVersions(image, metadata, basePath) {
   const results = [];
   const format = metadata.format?.toLowerCase();
 
-  // Optimize original format
-  if (format === 'jpeg' || format === 'jpg') {
+  // Only generate JPG version if the original is not already a JPG/JPEG
+  if ((format !== 'jpeg' && format !== 'jpg') && (format === 'png' || format === 'webp')) {
     const buffer = await image
       .jpeg({ 
         quality: QUALITY.jpg, 
@@ -205,7 +205,8 @@ async function optimizeImage(inputPath) {
     }
 
     const basePath = inputPath.replace(/\.[^/.]+$/, '');
-    await ensureDirectoryExists(basePath);
+    const ext = path.extname(inputPath).toLowerCase();
+    const isJpg = ext === '.jpg' || ext === '.jpeg';
     
     const image = sharp(inputPath, { failOnError: false });
     const metadata = await image.metadata();
@@ -227,18 +228,90 @@ async function optimizeImage(inputPath) {
       });
     }
 
-    // Generate optimized versions
-    const versions = await generateOptimizedVersions(image, metadata, basePath);
+    // For JPG files, optimize in place using buffer
+    if (isJpg) {
+      const originalSize = (await fs.stat(inputPath)).size;
+      const tempPath = `${inputPath}.tmp`;
+      
+      try {
+        // Optimize JPG and save to temp file
+        await image
+          .jpeg({ 
+            quality: QUALITY.jpg, 
+            mozjpeg: true,
+            chromaSubsampling: '4:4:4'
+          })
+          .toFile(tempPath);
 
-    // Write all versions
-    for (const { buffer, ext, path: outputPath } of versions) {
-      await fs.writeFile(outputPath, buffer);
-      console.log(`✓ Generated ${ext.toUpperCase()}: ${path.basename(outputPath)}`);
+        // Atomic replacement of original with optimized version
+        await fs.rename(tempPath, inputPath);
+        
+        const optimizedSize = (await fs.stat(inputPath)).size;
+        const savings = ((originalSize - optimizedSize) / originalSize * 100).toFixed(1);
+        console.log(`✓ Optimized JPG: ${path.basename(inputPath)} (${formatBytes(originalSize)} → ${formatBytes(optimizedSize)}, ${savings}% saved)`);
+      } catch (error) {
+        // Clean up temp file if it exists
+        try {
+          await fs.unlink(tempPath);
+        } catch {}
+        throw error;
+      }
+
+      // Generate WebP and AVIF versions
+      for (const format of GENERATE_FORMATS) {
+        const outputPath = `${basePath}.${format}`;
+        let buffer;
+
+        if (format === 'webp') {
+          buffer = await image
+            .webp({ 
+              quality: QUALITY.webp,
+              effort: 6,
+              smartSubsample: true
+            })
+            .toBuffer();
+        } else if (format === 'avif') {
+          buffer = await image
+            .avif({ 
+              quality: QUALITY.avif,
+              effort: 9,
+              chromaSubsampling: '4:4:4'
+            })
+            .toBuffer();
+        }
+
+        if (buffer) {
+          await fs.writeFile(outputPath, buffer);
+          console.log(`✓ Generated ${format.toUpperCase()}: ${path.basename(basePath)}.${format}`);
+        }
+      }
+    } else {
+      // For non-JPG files, proceed with normal optimization
+      await ensureDirectoryExists(basePath);
+
+      // Generate optimized versions
+      const versions = await generateOptimizedVersions(image, metadata, basePath);
+
+      // Write all versions
+      for (const { buffer, ext, path: outputPath } of versions) {
+        await fs.writeFile(outputPath, buffer);
+        console.log(`✓ Generated ${ext.toUpperCase()}: ${path.basename(outputPath)}`);
+      }
     }
 
   } catch (error) {
     console.warn(`⚠️ Error processing ${path.basename(inputPath)}:`, error.message);
   }
+}
+
+// Helper function to format bytes to human readable size
+function formatBytes(bytes, decimals = 1) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))}${sizes[i]}`;
 }
 
 async function optimizeImages() {
