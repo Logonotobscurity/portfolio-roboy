@@ -1,7 +1,7 @@
 [build]
-  command = "npm ci && npm run build"
+  command = "npm run build"
   publish = "dist"
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ./package-lock.json"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -33,9 +33,9 @@
   status = 200
 
 [dev]
-  command = "npm run dev"
-  port = 5173
-  targetPort = 3000
+  framework = "vite"
+  targetPort = 5173
+  autoLaunch = true
 
 [[headers]]
   for = "/*"
@@ -47,35 +47,15 @@
     Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; connect-src 'self' https: wss:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; font-src 'self' data: https:; frame-src 'self' https:;"
     Cache-Control = "public, max-age=31536000"
     Accept-Encoding = "br, gzip"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
 [[headers]]
-  for = "/assets/js/*"
+  for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-    Content-Type = "application/javascript; charset=utf-8"
     Accept-Encoding = "br, gzip"
-    Vary = "Accept-Encoding"
-
-[[headers]]
-  for = "/assets/css/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Content-Type = "text/css; charset=utf-8"
-    Accept-Encoding = "br, gzip"
-    Vary = "Accept-Encoding"
-
-[[headers]]
-  for = "/assets/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Vary = "Accept-Encoding"
-
-[[headers]]
-  for = "/assets/fonts/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Access-Control-Allow-Origin = "*"
     Vary = "Accept-Encoding"
 
 [functions]
-  node_bundler = "esbuild" 
+  node_bundler = "esbuild"
+  included_files = ["dist/**"] 
