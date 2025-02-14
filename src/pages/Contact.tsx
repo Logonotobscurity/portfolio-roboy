@@ -211,11 +211,11 @@ export default function Contact(): React.ReactElement {
       if (error instanceof Error) {
         toast.error(`Failed to send message: ${error.message}`);
       } else {
-        toast.error('Failed to send message. Please try again.');
+      toast.error('Failed to send message. Please try again.');
       }
     } finally {
       if (!abortControllerRef.current?.signal.aborted) {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
         stopGlobalLoading();
       }
     }
@@ -249,35 +249,35 @@ export default function Contact(): React.ReactElement {
 
   return (
     <ErrorBoundary>
-      <main className="min-h-screen bg-retro-black text-retro-white">
+    <main className="min-h-screen bg-retro-black text-retro-white">
         {/* Hero Section */}
-        <div className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0">
-            <img
-              src="/images/projects/RooKingdom.jpg"
-              alt="Contact Hero"
-              className="w-full h-full object-cover opacity-50"
+      <div className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="/images/projects/RooKingdom.jpg"
+            alt="Contact Hero"
+            className="w-full h-full object-cover opacity-50"
               width={1920}
               height={1080}
-              loading="eager"
-            />
-            <PatternOverlay variant="grid" className="opacity-20" />
+            loading="eager"
+          />
+          <PatternOverlay variant="grid" className="opacity-20" />
             <PatternOverlay variant="kente" className="opacity-10" />
             <div className="absolute inset-0 bg-gradient-to-b from-retro-black/90 via-retro-black/50 to-retro-black" />
-          </div>
+        </div>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
               viewport={{ once: true, amount: 0.2 }}
               layout
               className="text-center"
-            >
+          >
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">Get in Touch</h1>
               <p className="text-xl text-retro-white/80">Let's create something amazing together</p>
-            </motion.div>
+          </motion.div>
           </div>
         </div>
 
@@ -286,7 +286,7 @@ export default function Contact(): React.ReactElement {
           <PatternOverlay variant="grid" className="opacity-10" />
           <PatternOverlay variant="dots" className="opacity-5" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Contact Information */}
+      {/* Contact Information */}
             <div>
               <h2 className="text-2xl font-bold mb-6 text-primary">Contact Information</h2>
               <div className="space-y-4">
@@ -321,7 +321,7 @@ export default function Contact(): React.ReactElement {
                   <MapPin className="w-5 h-5 text-primary" aria-hidden="true" />
                   <span className="text-gray-300">{pageData?.contactInfo.address}</span>
                 </p>
-              </div>
+                </div>
 
               {/* Social Links */}
               <div className="mt-8">
@@ -435,7 +435,7 @@ export default function Contact(): React.ReactElement {
                       {errors.message}
                     </p>
                   )}
-                </div>
+          </div>
 
                 <button
                   type="submit"
@@ -446,9 +446,9 @@ export default function Contact(): React.ReactElement {
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
-            </RetroCard>
-          </div>
-        </section>
+          </RetroCard>
+        </div>
+      </section>
       </main>
     </ErrorBoundary>
   );
