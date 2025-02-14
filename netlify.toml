@@ -1,12 +1,13 @@
 [build]
-  command = "npm run build"
+  command = "npm install --include=optional && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
   NETLIFY_USE_YARN = "false"
-  NPM_FLAGS = "--no-optional"
+  NPM_FLAGS = "--include=optional --force"
+  SHARP_IGNORE_GLOBAL_LIBVIPS = "1"
   CI = "true"
   VITE_CJS_TRACE = "1"
 
