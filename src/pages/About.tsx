@@ -1,19 +1,23 @@
 /// <reference types="react" />
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import type { FC } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Mail, Phone, MapPin, Globe, 
   Sparkles, Mic, ChevronDown, Instagram, Twitter, Linkedin, Facebook
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { RetroCard } from '../components/RetroCard';
+import type { RetroCardProps } from '../components/RetroCard';
 import { PatternOverlay } from '../components/PatternOverlay';
 import { GlitchText } from '../components/GlitchText';
 import { FashionStyleSection } from '../components/FashionStyleSection';
-import { useRef } from 'react';
 import { TimelineContent } from '../components/TimelineContent';
 import { Marquee } from '../components/Marquee';
 import { useNavigate } from 'react-router-dom';
+import { useLoading } from '../providers/LoadingProvider';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 const specialEvents = [
   { name: "Firewood Jollof Festival", role: "Festival Host" },
@@ -23,7 +27,15 @@ const specialEvents = [
   { name: "RETRO RAVE", role: "Event Host" }
 ];
 
-const stats = [
+// Define proper types for RetroCard
+const MemoizedRetroCard: FC<RetroCardProps> = React.memo(RetroCard);
+
+interface StatItem {
+  label: string;
+  icon: LucideIcon;
+}
+
+const stats: StatItem[] = [
   { label: 'Smirnoff X1 Tour', icon: Sparkles },
   { label: 'Gulder Ultimate Search', icon: Sparkles },
   { label: 'Gordons Moringa', icon: Sparkles },
@@ -84,9 +96,22 @@ const universityShows = [
   { name: "Caleb University", role: "Show Host" }
 ];
 
-export default function About() {
-  const scrollRef = useRef(null);
+export default function About(): React.ReactElement {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { startLoading, stopLoading } = useLoading();
+
+  useEffect(() => {
+    startLoading();
+    // Simulate data loading
+    const timer = setTimeout(() => {
+      stopLoading();
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+      stopLoading();
+    };
+  }, [startLoading, stopLoading]);
 
   return (
     <div className="min-h-screen bg-retro-black text-retro-white">
@@ -163,63 +188,73 @@ export default function About() {
         <PatternOverlay variant="kente" className="opacity-10" />
         <div className="w-full overflow-hidden">
           <div className="flex flex-col gap-8">
-            <Marquee className="py-4" speed={20} reverse={false} pauseOnHover={false}>
-              {[...stats, ...stats].map((stat, index) => (
-                <motion.div
-                  key={`${stat.label}-${index}-left`}
-                  className="mx-2"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <RetroCard className="w-56 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 transform hover:-translate-y-1">
-                    <div className="flex flex-col items-center text-center p-4">
-                      <motion.div
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                        className="bg-primary/10 p-3 rounded-full mb-3"
-                      >
-                        <div className="icon-wrapper">
-                          {stat.icon}
-                        </div>
-                      </motion.div>
-                      <h3 className="font-display text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white">
-                        {stat.label}
-                      </h3>
-                    </div>
-                  </RetroCard>
-                </motion.div>
-              ))}
-            </Marquee>
+            <ErrorBoundary>
+              <Marquee className="py-4" speed={20} reverse={false} pauseOnHover={false}>
+                {[...stats, ...stats].map((stat, index) => (
+                  <motion.div
+                    key={`${stat.label}-${index}-${Math.random().toString(36).substr(2, 9)}`}
+                    className="mx-2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <MemoizedRetroCard className="w-56 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="flex flex-col items-center text-center p-4">
+                        <motion.div
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                          className="bg-primary/10 p-3 rounded-full mb-3"
+                        >
+                          <div className="icon-wrapper">
+                            {React.createElement(stat.icon, {
+                              size: 24,
+                              className: "text-primary"
+                            })}
+                          </div>
+                        </motion.div>
+                        <h3 className="font-display text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white">
+                          {stat.label}
+                        </h3>
+                      </div>
+                    </MemoizedRetroCard>
+                  </motion.div>
+                ))}
+              </Marquee>
+            </ErrorBoundary>
 
-            <Marquee className="py-4" speed={25} reverse={true} pauseOnHover={false}>
-              {[...stats, ...stats].slice().reverse().map((stat, index) => (
-                <motion.div
-                  key={`${stat.label}-${index}-right`}
-                  className="mx-2"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <RetroCard className="w-56 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 transform hover:-translate-y-1">
-                    <div className="flex flex-col items-center text-center p-4">
-                      <motion.div
-                        whileHover={{ scale: 1.1, rotate: -5 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                        className="bg-primary/10 p-3 rounded-full mb-3"
-                      >
-                        <div className="icon-wrapper">
-                          {stat.icon}
-                        </div>
-                      </motion.div>
-                      <h3 className="font-display text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white">
-                        {stat.label}
-                      </h3>
-                    </div>
-                  </RetroCard>
-                </motion.div>
-              ))}
-            </Marquee>
+            <ErrorBoundary>
+              <Marquee className="py-4" speed={25} reverse={true} pauseOnHover={false}>
+                {[...stats, ...stats].slice().reverse().map((stat, index) => (
+                  <motion.div
+                    key={`${stat.label}-${index}-${Math.random().toString(36).substr(2, 9)}`}
+                    className="mx-2"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <MemoizedRetroCard className="w-56 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="flex flex-col items-center text-center p-4">
+                        <motion.div
+                          whileHover={{ scale: 1.1, rotate: -5 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                          className="bg-primary/10 p-3 rounded-full mb-3"
+                        >
+                          <div className="icon-wrapper">
+                            {React.createElement(stat.icon, {
+                              size: 24,
+                              className: "text-primary"
+                            })}
+                          </div>
+                        </motion.div>
+                        <h3 className="font-display text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white">
+                          {stat.label}
+                        </h3>
+                      </div>
+                    </MemoizedRetroCard>
+                  </motion.div>
+                ))}
+              </Marquee>
+            </ErrorBoundary>
           </div>
         </div>
       </section>
@@ -567,7 +602,7 @@ export default function About() {
       <section id="contact" className="relative py-12 sm:py-20">
         <PatternOverlay variant="grid" className="opacity-[0.02]" />
         <div className="container mx-auto px-4">
-          <RetroCard 
+          <MemoizedRetroCard 
             variant="highlight" 
             className="mx-auto max-w-4xl transform hover:scale-[1.01] transition-transform duration-300"
           >
@@ -589,7 +624,10 @@ export default function About() {
                 >
                   <div className="flex items-center space-x-3 p-3 rounded-lg bg-black/20 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300">
                     <div className="icon-wrapper">
-                      {item.icon}
+                      {React.createElement(item.icon, {
+                        size: 24,
+                        className: "text-primary"
+                      })}
                     </div>
                     <div>
                       <h3 className="font-display text-sm font-bold mb-0.5">{item.title}</h3>
@@ -614,24 +652,20 @@ export default function About() {
             {/* Social Icons */}
             <div className="mt-6 border-t border-primary/10 pt-6 px-6">
               <div className="flex justify-center space-x-8">
-                <div className="icon-wrapper">
-                  <Instagram />
-                </div>
-                <div className="icon-wrapper">
-                  <Twitter />
-                </div>
-                <div className="icon-wrapper">
-                  <Facebook />
-                </div>
-                <div className="icon-wrapper">
-                  <Linkedin />
-                </div>
+                {[Instagram, Twitter, Facebook, Linkedin].map((Icon, index) => (
+                  <div key={index} className="icon-wrapper">
+                    {React.createElement(Icon, {
+                      size: 24,
+                      className: "text-primary hover:text-primary/80 transition-colors"
+                    })}
+                  </div>
+                ))}
               </div>
               <p className="text-center text-gray-400 text-sm mt-4">
                 © {new Date().getFullYear()} RooBoy. All rights reserved.
               </p>
             </div>
-          </RetroCard>
+          </MemoizedRetroCard>
         </div>
       </section>
     </div>

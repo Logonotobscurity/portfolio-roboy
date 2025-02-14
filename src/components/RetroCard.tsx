@@ -1,9 +1,11 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import { PatternOverlay } from './PatternOverlay';
+import { cn } from '../utils/cn';
 
-interface RetroCardProps {
-  children: ReactNode;
+export interface RetroCardProps {
+  children: React.ReactNode;
   className?: string;
   variant?: 'default' | 'highlight' | 'dark';
   hover?: boolean;
@@ -14,7 +16,7 @@ export function RetroCard({
   className = '',
   variant = 'default',
   hover = true,
-}: RetroCardProps) {
+}: RetroCardProps): React.ReactElement {
   const variants = {
     default: 'border-white/10 bg-black/30',
     highlight: 'border-primary/30 bg-primary/5',
@@ -23,12 +25,12 @@ export function RetroCard({
 
   return (
     <motion.div
-      className={`
-        relative overflow-hidden rounded-lg border backdrop-blur-xl
-        ${variants[variant]}
-        ${hover ? 'transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_15px_rgba(45,0,247,0.1)]' : ''}
-        ${className}
-      `}
+      className={cn(
+        'relative overflow-hidden rounded-lg border backdrop-blur-xl',
+        variants[variant],
+        hover && 'hover:border-primary/30 hover:shadow-[0_0_15px_rgba(45,0,247,0.1)]',
+        className
+      )}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
