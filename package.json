@@ -20,7 +20,7 @@
     "typecheck": "tsc --noEmit",
     "prepare": "npm run optimize-images",
     "generate-favicons": "node scripts/generate-favicons.cjs",
-    "optimize-images": "node scripts/optimize-images.js",
+    "optimize-images": "npm rebuild --platform=linux --arch=x64 sharp && node scripts/optimize-images.js",
     "optimize-media": "node scripts/optimize-media.js",
     "generate-svg-sprite": "node scripts/generate-svg-sprite.js",
     "optimize": "npm run optimize-media && npm run generate-svg-sprite",
