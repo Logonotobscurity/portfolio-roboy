@@ -1,0 +1,51 @@
+@layer utilities {
+  /* Gradient Text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-white;
+  }
+
+  /* Hover Effects */
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-[0_0_15px_rgba(45,0,247,0.5)];
+  }
+
+  /* Backgrounds */
+  .bg-gradient-overlay {
+    @apply bg-gradient-to-b from-retro-black/90 via-retro-black/50 to-retro-black;
+  }
+
+  .bg-card-hover {
+    @apply hover:bg-[rgba(45,0,247,0.1)];
+  }
+
+  /* Borders */
+  .border-glow {
+    @apply border border-primary/30 hover:border-primary/50;
+  }
+
+  /* Common Layouts */
+  .section-padding {
+    @apply py-12 sm:py-20;
+  }
+
+  .container-padding {
+    @apply px-4;
+  }
+
+  /* Typography */
+  .heading-large {
+    @apply font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold;
+  }
+
+  .heading-medium {
+    @apply font-display text-2xl sm:text-3xl font-bold text-primary uppercase tracking-wider;
+  }
+
+  .text-body {
+    @apply text-gray-300 leading-relaxed;
+  }
+} 

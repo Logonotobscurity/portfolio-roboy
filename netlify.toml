@@ -1,32 +1,17 @@
 [build]
-  command = "npm install --include=optional && npm run build"
+  command = "npm ci && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
-  NETLIFY_USE_YARN = "false"
-  NPM_FLAGS = "--include=optional --force"
+  NPM_FLAGS = "--no-optional"
   SHARP_IGNORE_GLOBAL_LIBVIPS = "1"
+  SHARP_DIST_BASE_URL = "https://npmmirror.com/mirrors/sharp-linux-x64/"
   CI = "true"
-  VITE_CJS_TRACE = "1"
 
 [build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.html]
-  pretty_urls = true
-
-[build.processing.images]
-  compress = true
+  skip_processing = true
 
 [[redirects]]
   from = "/*"
@@ -35,7 +20,7 @@
 
 [dev]
   framework = "vite"
-  targetPort = 5173
+  targetPort = 3000
   autoLaunch = true
 
 [[headers]]
@@ -45,18 +30,108 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; connect-src 'self' https: wss:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; font-src 'self' data: https:; frame-src 'self' https:;"
-    Cache-Control = "public, max-age=31536000"
-    Accept-Encoding = "br, gzip"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Resource-Policy = "same-origin"
+    Content-Security-Policy = """
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https: blob:;
+      font-src 'self' data:;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      connect-src 'self' https://*.netlify.app https://api.yourbackend.com;
+      media-src 'self' blob:;
+      worker-src 'self' blob:;
+      manifest-src 'self';
+      block-all-mixed-content;
+      upgrade-insecure-requests;
+    """
+    Permissions-Policy = """
+      accelerometer=(),
+      ambient-light-sensor=(),
+      autoplay=(),
+      battery=(),
+      camera=(),
+      cross-origin-isolated=(),
+      display-capture=(),
+      document-domain=(),
+      encrypted-media=(),
+      execution-while-not-rendered=(),
+      execution-while-out-of-viewport=(),
+      fullscreen=(),
+      geolocation=(),
+      gyroscope=(),
+      keyboard-map=(),
+      magnetometer=(),
+      microphone=(),
+      midi=(),
+      navigation-override=(),
+      payment=(),
+      picture-in-picture=(),
+      publickey-credentials-get=(),
+      screen-wake-lock=(),
+      sync-xhr=(),
+      usb=(),
+      web-share=(),
+      xr-spatial-tracking=(),
+      clipboard-read=(),
+      clipboard-write=(),
+      gamepad=(),
+      speaker-selection=(),
+      interest-cohort=()
+    """
+    Cache-Control = "public, max-age=0, must-revalidate"
+    NEL = """
+      {"report_to":"default","max_age":31536000,"include_subdomains":true}
+    """
+    Report-To = """
+      {"group":"default","max_age":31536000,"endpoints":[{"url":"https://yourwebsite.report-uri.com/a/d/g"}]}
+    """
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-    Accept-Encoding = "br, gzip"
+    Cache-Control = """
+      public,
+      max-age=31536000,
+      immutable,
+      stale-while-revalidate=86400
+    """
     Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = """
+      public,
+      max-age=31536000,
+      immutable,
+      stale-while-revalidate=86400
+    """
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = """
+      public,
+      max-age=31536000,
+      immutable,
+      stale-while-revalidate=86400
+    """
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [functions]
   node_bundler = "esbuild"
-  included_files = ["dist/**"] 
+  included_files = ["dist/**"]
+  external_node_modules = ["sharp"]

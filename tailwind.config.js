@@ -11,11 +11,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2D00F7',
+        primary: {
+          DEFAULT: '#2D00F7',
+          light: '#6B4CF5',
+        },
         'primary-dark': '#1A0099',
         'primary-light': '#4D33FF',
-        'retro-black': '#0A0A0A',
-        'retro-white': '#F5F5F5',
+        retro: {
+          black: '#0A0A0A',
+          white: '#F5F5F5',
+          gray: '#808080',
+        },
       },
       animation: {
         'gradient': 'gradient 8s linear infinite',
@@ -24,6 +30,8 @@ export default {
         'flicker': 'flicker 0.3s infinite',
         'glitch-1': 'glitch-1 2.5s infinite',
         'glitch-2': 'glitch-2 2.5s infinite',
+        'marquee-slow': 'marquee-slow 30s linear infinite',
+        'marquee-slow-reverse': 'marquee-slow-reverse 30s linear infinite'
       },
       keyframes: {
         gradient: {
@@ -65,12 +73,20 @@ export default {
           '66%': { transform: 'translate(-2px, 2px)' },
           '66.99%': { transform: 'translate(-2px, 2px)' },
           '67%': { transform: 'none' }
+        },
+        'marquee-slow': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' }
+        },
+        'marquee-slow-reverse': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0)' }
         }
       },
       fontFamily: {
         sans: ['Inter var', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        display: ['Orbitron', 'sans-serif'],
+        display: ['Space Grotesk', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -89,6 +105,14 @@ export default {
     }),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/container-queries'),
+    function({ addBase }) {
+      addBase({
+        'html': { 
+          '-webkit-text-size-adjust': '100%',
+          'text-size-adjust': '100%'
+        }
+      })
+    }
   ],
   variants: {
     extend: {

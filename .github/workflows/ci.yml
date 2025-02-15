@@ -1,93 +1,183 @@
-name: CI/CD
+name: CI/CD → Netlify
 
 on:
   push:
-    branches: [ main ]
+    branches: [master]
   pull_request:
-    branches: [ main ]
+    branches: [master]
+
+env:
+  NODE_VERSION: '20'
+  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
 jobs:
-  build-and-test:
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Type check
-      run: npm run typecheck
-    
-    - name: Lint
-      run: npm run lint
-    
-    - name: Test
-      run: npm run test:coverage
-    
-    - name: Build
-      run: npm run build
-
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm audit
+        continue-on-error: false
         
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist
-        path: dist/
+      - name: Validate environment
+        run: |
+          node scripts/validate-env.js
+          
+      - name: Type check
+        run: npm run typecheck
+        
+      - name: Lint
+        run: npm run lint
+        
+      - name: Test
+        run: npm run test:coverage
+        
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          CI: true
+      
+      - name: Analyze bundle
+        run: |
+          npx vite-bundle-visualizer
+          node scripts/analyze-bundle-size.js
+        
+      - name: Check bundle size
+        run: |
+          echo "Checking bundle size limits..."
+          find dist -type f -name "*.js" -exec du -b {} \; | 
+          awk '{ if ($1 > 500000) print "Warning: " $2 " is " $1/1024 "KB" }'
+          
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+          if-no-files-found: error
 
   lighthouse:
-    needs: build-and-test
+    needs: build
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Download build
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-        path: dist/
-    
-    - name: Run Lighthouse CI
-      uses: treosh/lighthouse-ci-action@v11
-      with:
-        configPath: './.github/lighthouse/config.json'
-        uploadArtifacts: true
-        temporaryPublicStorage: true
+      - uses: actions/checkout@v4
+      
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
         
-  bundle-analysis:
-    needs: build-and-test
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: './.github/lighthouse/config.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          budgetPath: './.github/lighthouse/budget.json'
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  security:
+    needs: build
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Build with bundle analysis
-      run: npm run build
-      env:
-        ANALYZE: true
-    
-    - name: Upload bundle analysis
-      uses: actions/upload-artifact@v4
-      with:
-        name: bundle-analysis
-        path: stats.html 
+      - uses: actions/checkout@v4
+      
+      - name: Run OWASP ZAP scan
+        uses: zaproxy/action-full-scan@v0.9.0
+        with:
+          target: 'https://deploy-preview-${{ github.event.number }}--your-site.netlify.app'
+          
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+  deploy:
+    needs: [build, lighthouse, security]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './dist'
+          production-branch: master
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+          fails-without-credentials: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 2
+
+  notify:
+    needs: deploy
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify on success
+        if: ${{ success() }}
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          channel-id: 'deployments'
+          slack-message: "✅ Deployment successful! Site is live at https://your-site.netlify.app"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          
+      - name: Notify on failure
+        if: ${{ failure() }}
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          channel-id: 'deployments'
+          slack-message: "❌ Deployment failed! Check the logs at ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

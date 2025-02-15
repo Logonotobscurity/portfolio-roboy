@@ -1,0 +1,1 @@
+export const apiClient = { baseURL: process.env.VITE_API_URL };

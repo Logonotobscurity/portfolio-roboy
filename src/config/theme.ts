@@ -1,0 +1,1 @@
+export const theme = { primary: "#2D00F7" };
