@@ -1,13 +1,13 @@
 [build]
-  command = "npm ci && npm run build"
+  command = "npm install --force && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--no-optional"
-  SHARP_IGNORE_GLOBAL_LIBVIPS = "1"
-  SHARP_DIST_BASE_URL = "https://npmmirror.com/mirrors/sharp-linux-x64/"
+  NPM_FLAGS = "--force"
+  SHARP_IGNORE_GLOBAL_LIBVIPS = "true"
+  SHARP_DIST_BASE_URL = "https://sharp.pixelplumbing.com/vendor/v0.33.0/"
   CI = "true"
 
 [build.processing]
@@ -133,5 +133,5 @@
 
 [functions]
   node_bundler = "esbuild"
-  included_files = ["dist/**"]
   external_node_modules = ["sharp"]
+  included_files = ["dist/**"]

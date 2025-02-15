@@ -1,5 +1,1 @@
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0 0h32v32H0z" fill="none"/>
-  <path d="M1 0h0.5v32H1zM31.5 0h0.5v32h-0.5z" fill="currentColor" fill-opacity="0.05"/>
-  <path d="M0 1v0.5h32V1zM0 31.5v0.5h32v-0.5z" fill="currentColor" fill-opacity="0.05"/>
-</svg> 
+<svg aria-hidden="true" viewBox="0 0 32 32" role="img" focusable="false"><path fill="none" d="M0 0h32v32H0z"/><path fill="currentColor" fill-opacity=".05" d="M1 0h.5v32H1zm30.5 0h.5v32h-.5z"/><path fill="currentColor" fill-opacity=".05" d="M0 1v.5h32V1zm0 30.5v.5h32v-.5z"/></svg>
