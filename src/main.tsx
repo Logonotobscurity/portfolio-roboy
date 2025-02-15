@@ -23,9 +23,9 @@ if (import.meta.env.VITE_ENABLE_ERROR_TRACKING === 'true' && import.meta.env.PRO
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter basename={import.meta.env.PROD ? '/portfolio-roboy' : '/'}>
+    <BrowserRouter>
+      <Toaster position="top-right" theme="dark" richColors />
       <App />
     </BrowserRouter>
-    <Toaster position="top-right" theme="dark" />
   </React.StrictMode>
 );

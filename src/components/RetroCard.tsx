@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
 import { PatternOverlay } from './PatternOverlay';
 import { cn } from '../utils/cn';
 
@@ -36,10 +35,8 @@ export function RetroCard({
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
     >
-      <div className="relative z-10 p-6">
-        {children}
-      </div>
-      <PatternOverlay variant="grain" />
+      <div className="relative z-10">{children}</div>
+      <PatternOverlay variant="grain" className="opacity-20" />
       {variant === 'highlight' && (
         <motion.div
           className="absolute inset-0 bg-gradient-radial from-primary/5 to-transparent"

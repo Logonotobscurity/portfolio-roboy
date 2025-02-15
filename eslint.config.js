@@ -1,28 +1,165 @@
 import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
-export default tseslint.config(
-  { ignores: ['dist'] },
+export default [
+  js.configs.recommended,
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['scripts/**/*.{js,mjs,cjs}', '*.{js,cjs}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        Buffer: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+      },
+    },
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parser: tsParser,
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+        project: './tsconfig.json',
+      },
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        performance: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        // DOM APIs
+        HTMLElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLSpanElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLImageElement: 'readonly',
+        HTMLVideoElement: 'readonly',
+        HTMLAudioElement: 'readonly',
+        HTMLCanvasElement: 'readonly',
+        HTMLIFrameElement: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
+        MouseEvent: 'readonly',
+        KeyboardEvent: 'readonly',
+        DragEvent: 'readonly',
+        Node: 'readonly',
+        Element: 'readonly',
+        Document: 'readonly',
+        // Web APIs
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Blob: 'readonly',
+        File: 'readonly',
+        FileReader: 'readonly',
+        FormData: 'readonly',
+        Headers: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        MutationObserver: 'readonly',
+        IntersectionObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        PerformanceObserver: 'readonly',
+        TextEncoder: 'readonly',
+        Worker: 'readonly',
+        // Node.js globals for build scripts
+        process: 'readonly',
+        __dirname: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        // React globals
+        JSX: 'readonly',
+        React: 'readonly',
+        // Custom globals
+        MSApp: 'readonly',
+        __SENTRY_DEBUG__: 'readonly',
+        __SENTRY_RELEASE__: 'readonly',
+        __SENTRY_TRACING__: 'readonly',
+        __REACT_DEVTOOLS_GLOBAL_HOOK__: 'readonly',
+        __RRWEB_EXCLUDE_IFRAME__: 'readonly',
+        __RRWEB_EXCLUDE_SHADOW_DOM__: 'readonly',
+        reportError: 'readonly',
+        queueMicrotask: 'readonly',
+        atob: 'readonly',
+        customElements: 'readonly',
+      },
     },
     plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      '@typescript-eslint': tsPlugin,
+      react: reactPlugin,
+      'react-hooks': reactHooksPlugin,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
+      '@typescript-eslint/ban-types': ['error', {
+        types: {
+          '{}': {
+            message: 'Use Record<string, unknown> instead',
+            fixWith: 'Record<string, unknown>',
+          },
+        },
+      }],
+      '@typescript-eslint/triple-slash-reference': ['error', {
+        path: 'always',
+        types: 'never',
+        lib: 'never',
+      }],
+      'react/no-unescaped-entities': ['warn', {
+        forbid: [
+          { char: '>', alternatives: ['&gt;'] },
+          { char: '}', alternatives: ['&#125;'] },
+        ],
+      }],
+      'react/no-children-prop': 'warn',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'no-empty': 'warn',
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
+      'no-constant-condition': 'warn',
+      'no-constant-binary-expression': 'warn',
+      'no-fallthrough': 'warn',
+      'no-useless-escape': 'warn',
+      'getter-return': 'warn',
+      'no-prototype-builtins': 'warn',
+      'no-control-regex': 'warn',
+      'no-misleading-character-class': 'warn',
+      'no-sparse-arrays': 'warn',
+      'valid-typeof': 'error',
+      'no-self-assign': 'error',
+      'no-func-assign': 'warn',
+      'no-cond-assign': 'warn',
+      'no-setter-return': 'error',
     },
-  }
-);
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+  },
+]; 

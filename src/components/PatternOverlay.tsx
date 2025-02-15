@@ -1,50 +1,55 @@
+import React, { useState, useEffect } from 'react';
+import { cn } from '../utils/cn';
 
 interface PatternOverlayProps {
-  variant?: 'dots' | 'lines' | 'grid' | 'kente';
+  variant?: 'grid' | 'dots' | 'kente' | 'grain';
   className?: string;
 }
 
-export function PatternOverlay({ variant = 'dots', className = '' }: PatternOverlayProps) {
+export function PatternOverlay({ 
+  variant = 'grid', 
+  className 
+}: PatternOverlayProps): React.ReactElement {
+  const [patternError, setPatternError] = useState(false);
+
   const patterns = {
-    dots: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-    lines: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 10px)',
-    grid: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-    kente: `repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 8px),
-            repeating-linear-gradient(-45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 8px)`
+    grid: 'bg-[url("/patterns/grid.svg")]',
+    dots: 'bg-[url("/patterns/dots.svg")]',
+    kente: 'bg-[url("/patterns/kente.svg")]',
+    grain: 'bg-[url("/patterns/grain.svg")]'
   };
 
-  const getBackgroundStyle = () => {
-    switch (variant) {
-      case 'dots':
-        return {
-          backgroundImage: patterns.dots,
-          backgroundSize: '20px 20px'
-        };
-      case 'lines':
-        return {
-          backgroundImage: patterns.lines,
-          backgroundSize: '20px 20px'
-        };
-      case 'grid':
-        return {
-          backgroundImage: patterns.grid,
-          backgroundSize: '20px 20px'
-        };
-      case 'kente':
-        return {
-          backgroundImage: patterns.kente,
-          backgroundSize: '16px 16px'
-        };
-      default:
-        return {};
-    }
-  };
+  useEffect(() => {
+    // Preload pattern to check if it exists
+    const img = new Image();
+    img.src = `/patterns/${variant}.svg`;
+    img.onerror = () => setPatternError(true);
+    
+    return () => {
+      img.onerror = null;
+    };
+  }, [variant]);
+
+  if (patternError) {
+    console.warn(`Pattern ${variant}.svg not found, falling back to default style`);
+    return (
+      <div 
+        className={cn(
+          'absolute inset-0 pointer-events-none bg-black/5',
+          className
+        )} 
+        aria-hidden="true"
+      />
+    );
+  }
 
   return (
-    <div
-      className={`absolute inset-0 pointer-events-none ${className}`}
-      style={getBackgroundStyle()}
+    <div 
+      className={cn(
+        'absolute inset-0 pointer-events-none bg-repeat',
+        patterns[variant],
+        className
+      )} 
       aria-hidden="true"
     />
   );

@@ -1,0 +1,52 @@
+name: Staging Deployment Checks
+
+on:
+  push:
+    branches: [ development ]
+  pull_request:
+    branches: [ development ]
+
+jobs:
+  verify-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.9.0'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Verify folder structure
+        run: |
+          # Check if components are only in src/components
+          if [ -d "components" ]; then
+            echo "❌ Found components directory at root level - all components should be in src/components"
+            exit 1
+          fi
+          
+          # Verify src/components structure
+          if [ ! -d "src/components" ]; then
+            echo "❌ Missing src/components directory"
+            exit 1
+          fi
+          
+          # Verify public/assets structure
+          if [ ! -d "public/assets" ]; then
+            echo "❌ Missing public/assets directory"
+            exit 1
+          fi
+          
+          echo "✅ Folder structure verified"
+          
+      - name: Run tests
+        run: npm test
+        
+      - name: Build staging
+        run: npm run build:staging
+        env:
+          NODE_ENV: staging 
