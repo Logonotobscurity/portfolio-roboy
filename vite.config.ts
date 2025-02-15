@@ -40,7 +40,9 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
         '@components': path.resolve(__dirname, './src/components'),
         '@assets': path.resolve(__dirname, './public/assets')
-      }
+      },
+      dedupe: ['react', 'react-dom', 'lucide-react'],
+      mainFields: ['module', 'jsnext:main', 'jsnext', 'main']
     },
     build: {
       target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
@@ -170,7 +172,8 @@ export default defineConfig(({ mode }) => {
         treeShaking: true,
         minify: true,
         mainFields: ['module', 'main'],
-        conditions: ['import', 'module', 'default']
+        conditions: ['import', 'module', 'default'],
+        resolveExtensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
       }
     },
     server: {
