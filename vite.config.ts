@@ -1,9 +1,10 @@
 /// <reference types="vitest" />
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, UserConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { visualizer } from 'rollup-plugin-visualizer';
+import type { ManualChunksFunction, OutputOptions } from 'rollup';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,13 +14,13 @@ const CHUNK_SIZE_WARNING = 500; // KB
 const CHUNK_SIZE_ERROR = 1000; // KB
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }: { mode: string }): UserConfig => {
   // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
+  const isGitHubPages = env.GITHUB_PAGES === 'true';
   
   return {
-    base: '/',
+    base: isGitHubPages ? '/portfolioRoboy/' : '/',
     plugins: [
       react({
         jsxRuntime: 'automatic',
@@ -29,7 +30,7 @@ export default defineConfig(({ mode }) => {
         }
       }),
       mode === 'production' && visualizer({
-        open: true,
+        filename: 'stats.html',
         gzipSize: true,
         brotliSize: true,
         template: 'treemap'
@@ -41,7 +42,7 @@ export default defineConfig(({ mode }) => {
         '@components': path.resolve(__dirname, './src/components'),
         '@assets': path.resolve(__dirname, './public/assets')
       },
-      dedupe: ['react', 'react-dom', 'lucide-react'],
+      dedupe: ['react', 'react-dom', 'lucide-react', '@tanstack/react-query', '@tanstack/react-router'],
       mainFields: ['module', 'jsnext:main', 'jsnext', 'main']
     },
     build: {
@@ -54,7 +55,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         external: [/@rollup\/rollup-linux-.*-gnu/],
         output: {
-          manualChunks: (id) => {
+          manualChunks: ((id: string) => {
             // Core dependencies
             if (id.includes('node_modules/react/') || 
                 id.includes('node_modules/react-dom/') ||
@@ -85,6 +86,11 @@ export default defineConfig(({ mode }) => {
               return 'ui-utils';
             }
 
+            // Sentry
+            if (id.includes('node_modules/@sentry/')) {
+              return 'monitoring';
+            }
+
             // Route-based code splitting
             if (id.includes('/src/pages/')) {
               const segments = id.split('/');
@@ -112,9 +118,9 @@ export default defineConfig(({ mode }) => {
             }
 
             return 'vendor';
-          },
+          }) as ManualChunksFunction,
           format: 'es',
-          assetFileNames: (assetInfo) => {
+          assetFileNames: (assetInfo: { name?: string }) => {
             if (!assetInfo?.name) return 'assets/[name]-[hash][extname]';
             const info = assetInfo.name.split('.');
             const ext = info[info.length - 1];
@@ -127,16 +133,22 @@ export default defineConfig(({ mode }) => {
             return `assets/[name]-[hash][extname]`;
           },
           chunkFileNames: (chunkInfo) => {
-            if (chunkInfo.name.includes('page-')) {
+            if (chunkInfo.name?.includes('page-')) {
               return 'js/pages/[name]-[hash].js';
             }
-            if (chunkInfo.name.includes('section-')) {
+            if (chunkInfo.name?.includes('section-')) {
               return 'js/sections/[name]-[hash].js';
             }
             return 'js/[name]-[hash].js';
           },
-          entryFileNames: 'js/[name]-[hash].js'
-        }
+          entryFileNames: 'js/[name]-[hash].js',
+          compact: true,
+          generatedCode: {
+            arrowFunctions: true,
+            constBindings: true,
+            objectShorthand: true
+          }
+        } as OutputOptions
       },
       sourcemap: mode !== 'production',
       assetsInlineLimit: 4096,
@@ -144,7 +156,16 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       reportCompressedSize: true,
       copyPublicDir: true,
-      outDir: 'dist'
+      outDir: 'dist',
+      terserOptions: {
+        compress: {
+          drop_console: mode === 'production',
+          drop_debugger: mode === 'production',
+          pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : []
+        },
+        mangle: true
+      },
+      brotliSize: true
     },
     optimizeDeps: {
       include: [

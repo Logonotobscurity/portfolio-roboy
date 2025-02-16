@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const chalk = require('chalk');
+import { execSync } from 'child_process';
+import semver from 'semver';
+import chalk from 'chalk';
 
 const REQUIRED_ENV_VARS = [
   'VITE_APP_TITLE',
@@ -23,6 +23,25 @@ const REQUIRED_DIRECTORIES = [
   'src/components/ui/typography',
   'src/components/ui/branding'
 ];
+
+const requiredVersions = {
+  node: '>=20.0.0',
+  npm: '>=10.0.0'
+};
+
+function validateVersion(type, currentVersion, requiredVersion) {
+  if (!semver.satisfies(currentVersion, requiredVersion)) {
+    console.error(
+      chalk.red(
+        `Error: ${type} version ${currentVersion} does not satisfy required version ${requiredVersion}`
+      )
+    );
+    process.exit(1);
+  }
+  console.log(
+    chalk.green(`✓ ${type} version ${currentVersion} satisfies ${requiredVersion}`)
+  );
+}
 
 function validateEnvVars() {
   console.log(chalk.blue('Validating environment variables...'));
@@ -126,6 +145,41 @@ try {
   validateDirectoryStructure();
   validateDependencies();
   validateTypeScript();
+
+  // Validate Node.js version
+  const nodeVersion = process.version.replace('v', '');
+  validateVersion('Node.js', nodeVersion, requiredVersions.node);
+
+  // Validate npm version
+  const npmVersion = execSync('npm --version').toString().trim();
+  validateVersion('npm', npmVersion, requiredVersions.npm);
+
+  // Validate sharp installation
+  try {
+    const sharpVersion = execSync('npm list sharp --depth=0').toString();
+    if (sharpVersion.includes('sharp@')) {
+      console.log(chalk.green('✓ sharp is installed correctly'));
+    } else {
+      throw new Error('sharp not found');
+    }
+  } catch (error) {
+    console.error(
+      chalk.red('Error: sharp is not installed correctly. Please run npm rebuild sharp')
+    );
+    process.exit(1);
+  }
+
+  // Validate FFmpeg installation
+  try {
+    execSync('ffmpeg -version');
+    console.log(chalk.green('✓ FFmpeg is installed correctly'));
+  } catch (error) {
+    console.error(
+      chalk.red('Error: FFmpeg is not installed correctly. Please install FFmpeg')
+    );
+    process.exit(1);
+  }
+
   console.log(chalk.green.bold('✨ All validations passed!'));
 } catch (error) {
   console.error(chalk.red('❌ Validation failed:'), error);

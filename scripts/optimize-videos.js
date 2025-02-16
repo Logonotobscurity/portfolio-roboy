@@ -4,21 +4,55 @@ import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+// Normalize FFmpeg path for cross-platform support
+const ffmpegPath = path.normalize(ffmpegInstaller.path);
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const inputDir = path.join(__dirname, '../public/videos');
 const outputDir = path.join(__dirname, '../public/videos/optimized');
+const tempDir = path.join(os.tmpdir(), 'video-optimization');
+
+// Video optimization settings per platform
+const VIDEO_SETTINGS = {
+  mp4: os.platform() === 'win32' 
+    ? '-c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k -movflags +faststart'
+    : '-c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k -movflags +faststart -threads 0',
+  webm: os.platform() === 'win32'
+    ? '-c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 96k'
+    : '-c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 96k -row-mt 1 -threads 0'
+};
+
+async function ensureDirectoryExists(dir) {
+  try {
+    await fs.access(dir);
+  } catch {
+    await fs.mkdir(dir, { recursive: true });
+  }
+}
+
+async function cleanupTempFiles() {
+  try {
+    await fs.rm(tempDir, { recursive: true, force: true });
+  } catch (error) {
+    console.warn('Warning: Failed to cleanup temp files:', error.message);
+  }
+}
 
 async function optimizeVideo(inputPath) {
   const filename = path.basename(inputPath);
   const outputPath = path.join(outputDir, filename);
+  const tempPath = path.join(tempDir, `temp-${filename}`);
 
-  // Ensure output directory exists
-  await fs.mkdir(outputDir, { recursive: true });
+  // Ensure directories exist
+  await Promise.all([
+    ensureDirectoryExists(outputDir),
+    ensureDirectoryExists(tempDir)
+  ]);
 
   // Skip if output file exists and is newer than input
   try {
@@ -36,25 +70,30 @@ async function optimizeVideo(inputPath) {
   }
 
   return new Promise((resolve, reject) => {
+    const ext = path.extname(filename).toLowerCase();
+    const format = ext === '.webm' ? 'webm' : 'mp4';
+    
     ffmpeg(inputPath)
-      .outputOptions([
-        '-c:v libx264',     // Use H.264 codec
-        '-crf 23',          // Constant Rate Factor (18-28 is good)
-        '-preset medium',    // Encoding speed preset
-        '-movflags +faststart', // Enable fast start for web playback
-        '-profile:v main',   // H.264 profile
-        '-level 4.0',       // H.264 level
-        '-pix_fmt yuv420p', // Pixel format for maximum compatibility
-        '-an'               // Remove audio
-      ])
-      .output(outputPath)
-      .on('end', () => {
-        console.log(`✅ Optimized: ${filename}`);
-        resolve();
+      .outputOptions(VIDEO_SETTINGS[format].split(' '))
+      .output(tempPath)
+      .on('end', async () => {
+        try {
+          // Atomic move of temp file to final destination
+          await fs.rename(tempPath, outputPath);
+          console.log(`✅ Optimized: ${filename}`);
+          resolve();
+        } catch (error) {
+          reject(new Error(`Failed to move temp file: ${error.message}`));
+        }
       })
       .on('error', (err) => {
         console.error(`❌ Error optimizing ${filename}:`, err);
         reject(err);
+      })
+      .on('progress', (progress) => {
+        if (progress.percent) {
+          process.stdout.write(`\rProcessing: ${filename} - ${Math.round(progress.percent)}%`);
+        }
       })
       .run();
   });
@@ -62,6 +101,9 @@ async function optimizeVideo(inputPath) {
 
 async function main() {
   try {
+    // Ensure clean start
+    await cleanupTempFiles();
+
     const videos = await glob('**/*.{mp4,webm}', {
       cwd: inputDir,
       ignore: ['optimized/**'],
@@ -75,15 +117,32 @@ async function main() {
 
     console.log(`🎥 Found ${videos.length} videos to optimize...`);
 
-    for (const video of videos) {
-      await optimizeVideo(video);
+    // Process videos with concurrency limit
+    const concurrency = Math.max(1, Math.min(os.cpus().length - 1, 4));
+    const chunks = [];
+    
+    for (let i = 0; i < videos.length; i += concurrency) {
+      chunks.push(videos.slice(i, i + concurrency));
     }
 
-    console.log('✨ Video optimization complete!');
+    for (const chunk of chunks) {
+      await Promise.all(chunk.map(video => optimizeVideo(video)));
+    }
+
+    console.log('\n✨ Video optimization complete!');
   } catch (error) {
     console.error('❌ Error during video optimization:', error);
     process.exit(1);
+  } finally {
+    await cleanupTempFiles();
   }
 }
+
+// Handle cleanup on process exit
+process.on('SIGINT', async () => {
+  console.log('\n🧹 Cleaning up...');
+  await cleanupTempFiles();
+  process.exit(0);
+});
 
 main(); 
