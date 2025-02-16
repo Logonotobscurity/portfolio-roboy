@@ -35,3 +35,7 @@ yarn-error.log*
 
 # Netlify
 .netlify
+
+# Large media files
+public/videos/hero-intro.mp4
+!public/videos/optimized/hero-intro.mp4

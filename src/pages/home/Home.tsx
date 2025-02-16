@@ -69,7 +69,7 @@ export default function Home() {
         title="ROOBOY: THE STREET CAPTAIN"
         subtitle="| MASTER OF VIBES AND MOMENTS |"
         description="Where culture meets energy, and moments become memories."
-        videoUrl="/videos/hero-intro.mp4"
+        videoUrl="/videos/optimized/hero-intro.mp4"
         fallbackImageUrl="/assets/brand/base.jpg"
       />
 
