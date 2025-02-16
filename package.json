@@ -18,7 +18,8 @@
     "deploy:prod": "node scripts/deploy.js production",
     "deploy:staging": "node scripts/deploy.js staging",
     "deploy:preview": "node scripts/deploy.js preview",
-    "optimize-images": "sharp --input ./public/images --output ./dist/images"
+    "optimize-images": "sharp --input ./public/images --output ./dist/images",
+    "postinstall": "node scripts/postinstall.js"
   },
   "dependencies": {
     "@sentry/react": "9.1.0",
@@ -28,7 +29,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "7.1.5",
-    "sharp": "0.33.5",
+    "sharp": "0.32.6",
     "sonner": "1.7.4"
   },
   "devDependencies": {
