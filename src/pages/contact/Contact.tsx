@@ -78,7 +78,7 @@ export default function Contact(): React.ReactElement {
   const { startLoading: startGlobalLoading, stopLoading: stopGlobalLoading } = useLoading();
   const abortControllerRef = useRef<AbortController | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
   
   // Page-level state management
   const { 
@@ -176,7 +176,7 @@ export default function Contact(): React.ReactElement {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsLoading(false);
+      setPageLoading(false);
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -265,7 +265,7 @@ export default function Contact(): React.ReactElement {
   }, [validateForm, startGlobalLoading, stopGlobalLoading]);
 
   // Loading state - only show on initial load
-  if (isLoading) {
+  if (pageLoading) {
     return <PageLoading />;
   }
 

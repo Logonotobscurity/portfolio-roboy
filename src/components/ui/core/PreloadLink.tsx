@@ -17,7 +17,7 @@ export const PreloadLink: React.FC<PreloadLinkProps> = ({
   children,
   ...props
 }) => {
-  const ref = usePreloadOnVisible(to, preloadOptions);
+  const ref = usePreloadOnVisible<HTMLAnchorElement>(to, preloadOptions);
 
   return (
     <Link

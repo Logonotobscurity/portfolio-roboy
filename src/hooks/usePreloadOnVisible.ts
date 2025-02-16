@@ -1,62 +1,44 @@
-import { useEffect, useRef } from 'react';
-import { preloadRoute } from '../config/routes';
-import type { RoutePath } from '../config/routes';
+import { useRef, useEffect } from 'react';
+import { RoutePath } from '@/config/routes';
 
-interface UsePreloadOnVisibleOptions {
+interface PreloadOptions {
   threshold?: number;
   rootMargin?: string;
 }
 
 export function usePreloadOnVisible(
-  path: RoutePath,
-  options: UsePreloadOnVisibleOptions = {}
-): (node: Element | null) => void {
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const elementRef = useRef<Element | null>(null);
-
-  const callback = (node: Element | null) => {
-    if (elementRef.current && observerRef.current) {
-      observerRef.current.unobserve(elementRef.current);
-    }
-
-    if (node) {
-      elementRef.current = node;
-      if (observerRef.current) {
-        observerRef.current.observe(node);
-      }
-    }
-  };
+  route: RoutePath,
+  options: PreloadOptions = {}
+) {
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const { threshold = 0.1, rootMargin = '50px' } = options;
+    const element = ref.current;
+    if (!element) return;
 
-    observerRef.current = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            preloadRoute(path);
-            if (elementRef.current && observerRef.current) {
-              observerRef.current.unobserve(elementRef.current);
-            }
+            // Implement your preloading logic here
+            // For example:
+            // preloadRoute(route);
+            observer.unobserve(element);
           }
         });
       },
       {
-        threshold,
-        rootMargin,
+        threshold: options.threshold || 0,
+        rootMargin: options.rootMargin || '0px',
       }
     );
 
-    if (elementRef.current) {
-      observerRef.current.observe(elementRef.current);
-    }
+    observer.observe(element);
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
+      observer.unobserve(element);
     };
-  }, [path, options]);
+  }, [route, options.threshold, options.rootMargin]);
 
-  return callback;
+  return ref;
 } 
