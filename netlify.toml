@@ -26,10 +26,10 @@
 [[plugins]]
   package = "netlify-plugin-html-validate"
 
-  [plugins.inputs]
-    ext = "html"
-    config = { "extends": ["html-validate:recommended"], "rules": { "void-style": "off", "no-trailing-whitespace": "off", "element-required-attributes": "off" } }
-    quiet = true
+[plugins.inputs]
+  ext = "html"
+  config = { extends = ["html-validate:recommended"], rules = { void-style = "off", no-trailing-whitespace = "off", element-required-attributes = "off" } }
+  quiet = true
 
 [[headers]]
   for = "/*"
@@ -42,96 +42,28 @@
     Cross-Origin-Opener-Policy = "same-origin"
     Cross-Origin-Embedder-Policy = "require-corp"
     Cross-Origin-Resource-Policy = "same-origin"
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data: https: blob:;
-      font-src 'self' data:;
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'none';
-      connect-src 'self' https://*.netlify.app https://api.yourbackend.com;
-      media-src 'self' blob:;
-      worker-src 'self' blob:;
-      manifest-src 'self';
-      block-all-mixed-content;
-      upgrade-insecure-requests;
-    """
-    Permissions-Policy = """
-      accelerometer=(),
-      ambient-light-sensor=(),
-      autoplay=(),
-      battery=(),
-      camera=(),
-      cross-origin-isolated=(),
-      display-capture=(),
-      document-domain=(),
-      encrypted-media=(),
-      execution-while-not-rendered=(),
-      execution-while-out-of-viewport=(),
-      fullscreen=(),
-      geolocation=(),
-      gyroscope=(),
-      keyboard-map=(),
-      magnetometer=(),
-      microphone=(),
-      midi=(),
-      navigation-override=(),
-      payment=(),
-      picture-in-picture=(),
-      publickey-credentials-get=(),
-      screen-wake-lock=(),
-      sync-xhr=(),
-      usb=(),
-      web-share=(),
-      xr-spatial-tracking=(),
-      clipboard-read=(),
-      clipboard-write=(),
-      gamepad=(),
-      speaker-selection=(),
-      interest-cohort=()
-    """
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; connect-src 'self' https://*.netlify.app https://api.yourbackend.com; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; block-all-mixed-content; upgrade-insecure-requests;"
+    Permissions-Policy = "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), interest-cohort=()"
     Cache-Control = "public, max-age=0, must-revalidate"
-    NEL = """
-      {"report_to":"default","max_age":31536000,"include_subdomains":true}
-    """
-    Report-To = """
-      {"group":"default","max_age":31536000,"endpoints":[{"url":"https://yourwebsite.report-uri.com/a/d/g"}]}
-    """
+    NEL = '{"report_to":"default","max_age":31536000,"include_subdomains":true}'
+    Report-To = '{"group":"default","max_age":31536000,"endpoints":[{"url":"https://yourwebsite.report-uri.com/a/d/g"}]}'
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = """
-      public,
-      max-age=31536000,
-      immutable,
-      stale-while-revalidate=86400
-    """
+    Cache-Control = "public, max-age=31536000, immutable, stale-while-revalidate=86400"
     Vary = "Accept-Encoding"
 
 [[headers]]
   for = "/js/*"
   [headers.values]
-    Cache-Control = """
-      public,
-      max-age=31536000,
-      immutable,
-      stale-while-revalidate=86400
-    """
+    Cache-Control = "public, max-age=31536000, immutable, stale-while-revalidate=86400"
     Vary = "Accept-Encoding"
 
 [[headers]]
   for = "/images/*"
   [headers.values]
-    Cache-Control = """
-      public,
-      max-age=31536000,
-      immutable,
-      stale-while-revalidate=86400
-    """
+    Cache-Control = "public, max-age=31536000, immutable, stale-while-revalidate=86400"
     Vary = "Accept-Encoding"
 
 [[headers]]
