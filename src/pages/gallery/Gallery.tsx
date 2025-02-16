@@ -1,21 +1,12 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GlitchText } from '@/components/ui/typography/GlitchText';
-import { X, Camera, Award, Heart, Mic, Star, Users, Sparkles } from 'lucide-react';
-import { MasonryGrid } from '@/components/ui/data-display/MasonryGrid';
-import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
+import { X } from 'lucide-react';
 import { SectionContainer } from '@/components/ui/layout/SectionContainer';
 import { SectionHeader } from '@/components/ui/layout/SectionHeader';
+import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
 import { HeroSection } from '@/components/ui/sections/HeroSection';
-import {
-  DialogProvider,
-  DialogContainer,
-  DialogContent,
-  DialogClose,
-  DialogImage,
-  DialogTitle,
-  DialogDescription
-} from '@/components/ui/interactive/Dialog';
+import { MasonryGrid } from '@/components/ui/data-display/MasonryGrid';
+import { PageLoading } from '@/components/ui/feedback/PageLoading';
 
 // Featured images that will have grayscale effect
 const GRAYSCALE_IMAGES = [
@@ -214,8 +205,6 @@ const galleryImages: ImageData[] = [
   }
 ] as const;
 
-type GalleryImage = (typeof galleryImages)[0];
-
 const categories = [
   { value: 'all', label: 'All' },
   { value: 'Events', label: 'Events' },
@@ -273,10 +262,20 @@ function Lightbox({ image, onClose }: LightboxProps) {
   );
 }
 
-export default function Gallery() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
-  
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for images
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const filteredImages = useMemo(() => {
     return selectedCategory === 'all'
       ? galleryImages
@@ -286,6 +285,10 @@ export default function Gallery() {
   const handleImageClick = useCallback((image: ImageData) => {
     setSelectedImage(image);
   }, []);
+
+  if (isLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className="min-h-screen bg-retro-black text-retro-white">
@@ -342,3 +345,5 @@ export default function Gallery() {
     </div>
   );
 }
+
+export default Gallery;

@@ -1,56 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import type { FC } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Mail, Phone, MapPin, Globe, 
-  Sparkles, Mic, ChevronDown, Instagram, Twitter, Linkedin, Facebook
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
-import type { RetroCardProps } from '@/components/ui/interactive/RetroCard';
-import { GlitchText } from '@/components/ui/typography/GlitchText';
-import { FashionStyleSection } from '@/components/ui/sections/FashionStyleSection';
-import { JourneyTimeline } from '@/components/ui/sections/JourneyTimeline';
-import { useNavigate } from 'react-router-dom';
-import { useLoading } from '@/providers/LoadingProvider';
-import { ErrorBoundary } from '@/components/ui/feedback/ErrorBoundary';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
-import { Marquee } from '@/components/ui/data-display/Marquee';
-import { TimelineContent } from '@/components/ui/data-display/TimelineContent';
-import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
 import { SectionContainer } from '@/components/ui/layout/SectionContainer';
-import { SectionHeader } from '@/components/ui/layout/SectionHeader';
 import { HeroSection } from '@/components/ui/sections/HeroSection';
+import { PageLoading } from '@/components/ui/feedback/PageLoading';
 import { socialLinks } from '@/config/social-links';
-
-const specialEvents = [
-  { name: "Firewood Jollof Festival", role: "Festival Host" },
-  { name: "Pulse Fiesta", role: "Event Host" },
-  { name: "Sunday At Ilashe", role: "Event Host" },
-  { name: "Culture FM - Naija to the World", role: "Show Host" },
-  { name: "RETRO RAVE", role: "Event Host" }
-];
-
-// Define proper types for RetroCard
-const MemoizedRetroCard: FC<RetroCardProps> = React.memo(RetroCard);
-
-interface StatItem {
-  label: string;
-  icon: LucideIcon;
-}
-
-const stats: StatItem[] = [
-  { label: 'Smirnoff X1 Tour', icon: Sparkles },
-  { label: 'Gulder Ultimate Search', icon: Sparkles },
-  { label: 'Gordons Moringa', icon: Sparkles },
-  { label: 'MTV Base Cypher', icon: Mic },
-  { label: 'Pulse Fiesta', icon: Mic },
-  { label: 'Firewood Jollof Festival', icon: Sparkles },
-  { label: 'Culture FM', icon: Mic },
-  { label: 'Stanbic IBTC Fest', icon: Sparkles },
-  { label: 'RETRO RAVE', icon: Mic },
-  { label: 'Sunday At Ilashe', icon: Mic }
-];
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -73,31 +29,9 @@ const excellenceContent = [
   "From corporate events to street parties, I bring that same authentic energy. It's about creating moments that people will be talking about long after the event is over. That's the RooBoy experience!"
 ];
 
-const nextChapterContent = [
-  "The journey's been amazing, but trust me, we're just getting started! I'm constantly pushing to create new experiences and take entertainment to places it's never been before.",
-  "Stay tuned as we continue to push boundaries and create magic. The future is bright, and I'm excited to have you all along for the ride!"
-];
-
 const legacyContent = [
   "Beyond the lights and cameras, I'm focused on creating something that lasts. It's about inspiring the next generation to dream bigger and showing them that with passion and dedication, anything is possible.",
   "Through my platform, I'm working to create opportunities and open doors for young talents. Because the real measure of success isn't just what you achieve – it's what you inspire others to become."
-];
-
-
-const brandCollaborations = [
-  { name: "Gulder", role: "Brand Host" },
-  { name: "Gordons", role: "Brand Host" },
-  { name: "Smirnoff - No Known Address", role: "Event Host" },
-  { name: "Stanbic IBTC Fest", role: "Festival Host" },
-  { name: "MTV Base Cypher", role: "Show Host" }
-];
-
-const universityShows = [
-  { name: "Babcock University", role: "Show Host" },
-  { name: "Bowen University", role: "Show Host" },
-  { name: "ABUAD", role: "Show Host" },
-  { name: "Landmark University", role: "Show Host" },
-  { name: "Caleb University", role: "Show Host" }
 ];
 
 const showCategories = [
@@ -137,21 +71,19 @@ const showCategories = [
 ];
 
 export default function About(): React.ReactElement {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const { startLoading, stopLoading } = useLoading();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    startLoading();
-    // Simulate data loading
     const timer = setTimeout(() => {
-      stopLoading();
-    }, 1000);
-    return () => {
-      clearTimeout(timer);
-      stopLoading();
-    };
-  }, [startLoading, stopLoading]);
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className="min-h-screen bg-retro-black text-retro-white">

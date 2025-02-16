@@ -1,15 +1,14 @@
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import type { HTMLMotionProps, MotionStyle, Transition, Variants } from 'framer-motion';
 import { createContext, useContext, useId, useRef, useState, useMemo } from 'react';
-import type { ReactNode, RefObject } from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { XIcon } from 'lucide-react';
 
 interface DialogContextType {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   uniqueId: string;
-  triggerRef: RefObject<HTMLDivElement>;
+  triggerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 interface DialogProviderProps {

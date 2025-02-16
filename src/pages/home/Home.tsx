@@ -8,11 +8,13 @@ import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
 import { JourneyTimeline } from '@/components/ui/sections/JourneyTimeline';
 import { Testimonials } from '@/components/ui/sections/Testimonials';
 import { SocialMediaSection } from '@/components/ui/sections/SocialMediaSection';
-import { Footer } from '@/components/ui/navigation/Footer';
 import { TagCard } from '@/components/ui/data-display/TagCard';
 import { SectionContainer } from '@/components/ui/layout/SectionContainer';
 import { SectionHeader } from '@/components/ui/layout/SectionHeader';
 import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
+import { HomeFooter } from '@/components/ui/navigation/HomeFooter';
+import { PageLoading } from '@/components/ui/feedback/PageLoading';
+import { useEffect, useState } from 'react';
 
 const services = [
   {
@@ -46,6 +48,21 @@ const services = [
 ];
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for resources
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <PageLoading />;
+  }
+
   return (
     <div className="min-h-screen bg-retro-black text-retro-white">
       <VideoHero
@@ -355,7 +372,7 @@ export default function Home() {
       <BrandCarousel />
 
       {/* Footer */}
-      <Footer />
+      <HomeFooter />
     </div>
   );
 }

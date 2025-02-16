@@ -2,7 +2,7 @@ import { lazy } from 'react';
 
 // Define route types
 interface RouteConfig {
-  path: string;
+  path: RoutePath;
   component: React.LazyExoticComponent<() => JSX.Element>;
   preload?: () => void;
   children?: RouteConfig[];
@@ -16,45 +16,35 @@ const ROUTE_MODULE_MAP = {
   '/contact': 'contact/Contact',
 } as const;
 
-type RoutePath = keyof typeof ROUTE_MODULE_MAP;
+export type RoutePath = keyof typeof ROUTE_MODULE_MAP;
 
-// Helper to create lazy loaded components with proper typing
-function lazyLoad(path: RoutePath) {
-  const modulePath = ROUTE_MODULE_MAP[path];
-  return lazy(() => 
-    /* @vite-ignore */
-    import(`../pages/${modulePath}`).then(module => ({
-      default: module.default
-    }))
-  );
-}
+const Home = lazy(() => import('@/pages/home/Home'));
+const Gallery = lazy(() => import('@/pages/gallery/Gallery'));
+const About = lazy(() => import('@/pages/about/About'));
+const Contact = lazy(() => import('@/pages/contact/Contact'));
 
 // Define routes with preloading capability
 export const routes: RouteConfig[] = [
   {
     path: '/',
-    component: lazyLoad('/'),
-    preload: () => import('../pages/home/Home'),
-  },
-  {
-    path: '/about',
-    component: lazyLoad('/about'),
-    preload: () => import('../pages/about/About'),
+    component: Home,
   },
   {
     path: '/gallery',
-    component: lazyLoad('/gallery'),
-    preload: () => import('../pages/gallery/Gallery'),
+    component: Gallery,
+  },
+  {
+    path: '/about',
+    component: About,
   },
   {
     path: '/contact',
-    component: lazyLoad('/contact'),
-    preload: () => import('../pages/contact/Contact'),
+    component: Contact,
   },
 ];
 
 // Preload utilities
-export function preloadRoute(path: string): void {
+export function preloadRoute(path: RoutePath): void {
   const route = routes.find(r => r.path === path);
   route?.preload?.();
 }
@@ -64,11 +54,11 @@ export function preloadRoutes(): void {
 }
 
 // Type guard for route existence
-export function isValidRoute(path: string): boolean {
+export function isValidRoute(path: string): path is RoutePath {
   return routes.some(route => route.path === path);
 }
 
 // Get route configuration by path
-export function getRouteByPath(path: string): RouteConfig | undefined {
+export function getRouteByPath(path: RoutePath): RouteConfig | undefined {
   return routes.find(route => route.path === path);
 }

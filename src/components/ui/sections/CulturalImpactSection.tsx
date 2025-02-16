@@ -1,12 +1,8 @@
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Users, Lightbulb, Globe } from 'lucide-react';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
 import { ChapterHeading } from '@/components/ui/typography/ChapterHeading';
-import { CTACard } from '@/components/ui/interactive/CTACard';
-import { ImageCard } from '@/components/ui/cards/ImageCard';
-import { cn } from '@/lib/utils';
 
 interface Initiative {
   icon: any;
@@ -36,15 +32,6 @@ const initiatives: Initiative[] = [
     description: 'Showcasing Nigerian culture and talent on international platforms and events.',
   },
 ];
-
-const culturalImpactCTA = {
-  title: "Cultural Heritage",
-  description: "As a proud Nigerian entertainer, every performance celebrates the beauty and energy of our culture, bringing it to the world stage.",
-  buttonText: "Explore Our Work",
-  buttonHref: "#portfolio",
-  Icon: Heart,
-  pattern: "kente" as const
-};
 
 export function CulturalImpactSection() {
   return (

@@ -1,14 +1,7 @@
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
-import { cn } from '@/lib/utils';
 
-interface Brand {
-  name: string;
-  description: string;
-}
-
-const brands: Brand[] = [
+const brandsList = [
   {
     name: 'Smirnoff',
     description: 'Global beverage brand collaborations',
@@ -41,7 +34,7 @@ export function BrandLogos() {
         </motion.h2>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {brands.map((brand, index) => (
+          {brandsList.map((brand, index) => (
             <motion.div
               key={brand.name}
               initial={{ opacity: 0, y: 20 }}

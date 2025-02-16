@@ -1,6 +1,4 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
 import { cn } from '@/lib/utils';
 

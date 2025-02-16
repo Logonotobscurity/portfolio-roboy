@@ -1,7 +1,7 @@
 import { type ReactElement } from 'react';
 import { motion } from 'framer-motion';
-import { PatternOverlay } from '@components/ui/layout/PatternOverlay';
-import { ErrorBoundary } from '@components/ui/feedback/ErrorBoundary';
+import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
+import { ErrorBoundary } from '@/components/ui/feedback/ErrorBoundary';
 
 interface PageProps {
   title: string;

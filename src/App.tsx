@@ -1,59 +1,38 @@
-import React, { Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Navigation } from '@/components/ui/navigation/Navigation';
-import { LoadingProvider } from './providers/LoadingProvider';
 import { ErrorBoundary } from '@/components/ui/core/ErrorBoundary';
+import { PageError } from '@/components/PageError';
+import { Suspense, lazy } from 'react';
 import { PageLoading } from '@/components/ui/feedback/PageLoading';
-import { PageError } from '@/components/ui/feedback/PageError';
-import { routes } from './config/routes';
 
-// Memoized error fallback component
-const ErrorFallback = React.memo(() => (
-  <PageError
-    message="We're having trouble loading this page. Please try again."
-    onRetry={() => window.location.reload()}
-  />
-));
-ErrorFallback.displayName = 'ErrorFallback';
+// Lazy load pages
+const Home = lazy(() => import('@/pages/home/Home'));
+const Gallery = lazy(() => import('@/pages/gallery/Gallery'));
+const About = lazy(() => import('@/pages/about/About'));
+const Contact = lazy(() => import('@/pages/contact/Contact'));
 
-// Memoized routes component with proper types and preloading
-const AppRoutes = React.memo(() => {
+export default function App() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {routes.map(route => (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={
-              <ErrorBoundary fallback={<ErrorFallback />}>
-                <Suspense fallback={<PageLoading />}>
-                  <route.component />
-                </Suspense>
-              </ErrorBoundary>
-            }
-          />
-        ))}
-      </Routes>
-    </AnimatePresence>
-  );
-});
-AppRoutes.displayName = 'AppRoutes';
-
-export default function App(): JSX.Element {
-  return (
-    <ErrorBoundary>
-      <LoadingProvider>
-        <div className="relative min-h-screen bg-retro-black">
-          <Navigation />
-          <main className="relative">
-            <AppRoutes />
-          </main>
-        </div>
-      </LoadingProvider>
+    <ErrorBoundary fallback={<PageError message="Something went wrong" />}>
+      <div className="flex min-h-screen flex-col bg-retro-black">
+        <Navigation />
+        
+        <main className="flex-1">
+          <Suspense fallback={<PageLoading />}>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route path="/gallery" element={<Gallery />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+              </Routes>
+            </AnimatePresence>
+          </Suspense>
+        </main>
+      </div>
     </ErrorBoundary>
   );
 }
