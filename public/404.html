@@ -1,24 +1,14 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting...</title>
-  <script>
-    const repoPath = '/portfolio-roboy';
-    const l = window.location;
-    const redirectPath = sessionStorage.redirect;
-    delete sessionStorage.redirect;
-    if (redirectPath && redirectPath !== l.href) {
-      const cleanPath = redirectPath.replace(l.origin, '').replace(repoPath, '');
-      history.replaceState(null, null, repoPath + cleanPath);
-      window.location.replace(repoPath);
-    } else {
-      window.location.replace(repoPath);
-    }
-  </script>
-</head>
-<body>
-  Redirecting to homepage...
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Rooboy</title>
+    <meta name="description" content="The page you're looking for cannot be found.">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html> 
