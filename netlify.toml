@@ -23,6 +23,14 @@
   targetPort = 3000
   autoLaunch = true
 
+[[plugins]]
+  package = "netlify-plugin-html-validate"
+
+  [plugins.inputs]
+    ext = "html"
+    config = { "extends": ["html-validate:recommended"], "rules": { "void-style": "off", "no-trailing-whitespace": "off", "element-required-attributes": "off" } }
+    quiet = true
+
 [[headers]]
   for = "/*"
   [headers.values]
