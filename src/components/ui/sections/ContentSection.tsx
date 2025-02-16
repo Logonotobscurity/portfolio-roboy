@@ -2,7 +2,6 @@ import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { ChapterHeading } from '@/components/ui/typography/ChapterHeading';
 import { cn } from '@/lib/utils';
-import { LucideIcon } from 'lucide-react';
 
 interface ContentSectionProps {
   id?: string;

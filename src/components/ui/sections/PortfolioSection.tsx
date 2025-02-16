@@ -1,8 +1,6 @@
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import Dialog from '@/components/ui/interactive/Dialog';
-import { cn } from '@/lib/utils';
 
 const portfolioItems = [
   {

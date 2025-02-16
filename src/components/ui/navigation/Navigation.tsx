@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Image, User, Mail, Menu, X, LucideIcon } from 'lucide-react';
@@ -47,7 +47,7 @@ const NavItem = memo<{
           className={`${
             isMobile ? 'h-8 w-8' : 'h-5 w-5'
           } transition-colors duration-200 ${
-            isActive ? 'text-primary' : 'text-white hover:text-primary/80'
+            isActive ? 'text-[#2D00F7]' : 'text-white hover:text-[#2D00F7]/80'
           }`}
           aria-hidden="true"
         />
@@ -64,7 +64,7 @@ const NavItem = memo<{
         </motion.span>
         {isActive && !isMobile && (
           <motion.div
-            className="absolute -bottom-2 left-1/2 h-1 w-1 rounded-full bg-primary"
+            className="absolute -bottom-2 left-1/2 h-1 w-1 rounded-full bg-[#2D00F7]"
             layoutId="navIndicator"
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           />

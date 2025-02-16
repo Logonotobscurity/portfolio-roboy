@@ -1,8 +1,7 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
 
-interface StatItem {
+export interface StatItem {
   value: string;
   label: string;
   icon?: LucideIcon;

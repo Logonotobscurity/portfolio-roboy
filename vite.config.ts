@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { visualizer } from 'rollup-plugin-visualizer';
-import type { ManualChunksFunction, OutputOptions } from 'rollup';
+import type { OutputOptions } from 'rollup';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,10 +30,11 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
         }
       }),
       mode === 'production' && visualizer({
-        filename: 'stats.html',
+        filename: 'dist/stats.html',
         gzipSize: true,
         brotliSize: true,
-        template: 'treemap'
+        template: 'treemap',
+        open: true
       }),
     ].filter(Boolean),
     resolve: {
@@ -55,70 +56,10 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       rollupOptions: {
         external: [/@rollup\/rollup-linux-.*-gnu/],
         output: {
-          manualChunks: ((id: string) => {
-            // Core dependencies
-            if (id.includes('node_modules/react/') || 
-                id.includes('node_modules/react-dom/') ||
-                id.includes('node_modules/scheduler/')) {
-              return 'core';
-            }
-            
-            // Routing and data management
-            if (id.includes('node_modules/@tanstack/')) {
-              if (id.includes('react-query')) {
-                return 'data-management';
-              }
-              if (id.includes('react-router')) {
-                return 'routing';
-              }
-            }
-            
-            // UI and animations
-            if (id.includes('node_modules/framer-motion/') || 
-                id.includes('node_modules/popmotion/')) {
-              return 'animations';
-            }
-            
-            // UI utilities
-            if (id.includes('node_modules/lucide-react/') ||
-                id.includes('node_modules/clsx/') ||
-                id.includes('node_modules/tailwind-merge/')) {
-              return 'ui-utils';
-            }
-
-            // Sentry
-            if (id.includes('node_modules/@sentry/')) {
-              return 'monitoring';
-            }
-
-            // Route-based code splitting
-            if (id.includes('/src/pages/')) {
-              const segments = id.split('/');
-              const pageName = segments[segments.length - 2];
-              return `page-${pageName}`;
-            }
-
-            // Feature-based code splitting
-            if (id.includes('/src/components/')) {
-              if (id.includes('Section')) {
-                const segments = id.split('/');
-                const sectionName = segments[segments.length - 1].replace('.tsx', '');
-                return `section-${sectionName}`;
-              }
-              if (id.includes('/ui/')) {
-                return 'ui-components';
-              }
-            }
-
-            // Utilities and hooks
-            if (id.includes('/src/utils/') || 
-                id.includes('/src/lib/') || 
-                id.includes('/src/hooks/')) {
-              return 'utils';
-            }
-
-            return 'vendor';
-          }) as ManualChunksFunction,
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'ui-vendor': ['framer-motion', 'sonner'],
+          },
           format: 'es',
           assetFileNames: (assetInfo: { name?: string }) => {
             if (!assetInfo?.name) return 'assets/[name]-[hash][extname]';
@@ -164,8 +105,7 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
           pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : []
         },
         mangle: true
-      },
-      brotliSize: true
+      }
     },
     optimizeDeps: {
       include: [
@@ -173,7 +113,6 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
         'react-dom', 
         'react-router-dom',
         '@tanstack/react-query',
-        '@tanstack/react-router',
         'framer-motion',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
@@ -198,10 +137,10 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       }
     },
     server: {
-      port: 3000,
+      port: 3001,
       strictPort: true,
       host: true,
-      open: false,
+      open: true,
       hmr: {
         overlay: true
       }
@@ -218,11 +157,12 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       setupFiles: ['./src/test/setup.ts'],
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
       coverage: {
+        provider: 'v8',
         reporter: ['text', 'json', 'html'],
         exclude: [
           'node_modules/',
           'src/test/setup.ts',
-        ],
+        ]
       },
       css: true,
     },

@@ -1,9 +1,6 @@
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
-import AnimatedText from '@/components/ui/typography/AnimatedText';
-import { cn } from '@/lib/utils';
 
 interface HeroProps {
   title: string;

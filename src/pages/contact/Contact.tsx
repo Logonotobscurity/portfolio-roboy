@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Instagram, Twitter, Facebook, Youtube, MessageCircle, Music2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Twitter, Facebook, Youtube, MessageCircle, Music2 } from 'lucide-react';
+import { HeroSection } from '@/components/ui/sections/HeroSection';
+import { socialLinks } from '@/config/social-links';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
 import { PageLoading } from '@/components/ui/feedback/PageLoading';
 import { toast } from 'sonner';
@@ -9,16 +11,11 @@ import { RetroCard } from '@/components/ui/interactive/RetroCard';
 import { usePageState } from '@/hooks/usePageState';
 import { ErrorBoundary } from '@/components/ui/core/ErrorBoundary';
 import { useLoading } from '@/providers/LoadingProvider';
-import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
+import { SECTION_NAMES, SECTION_IDS } from '@/config/sections';
 import { SectionContainer } from '@/components/ui/layout/SectionContainer';
 import { SectionHeader } from '@/components/ui/layout/SectionHeader';
 import type { LucideIcon } from 'lucide-react';
 import { debounce } from 'lodash';
-import { type ReactElement } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { HeroSection } from '@/components/ui/sections/HeroSection';
-import { socialLinks } from '@/config/social-links';
 
 // Form validation schema
 const formSchema = z.object({
@@ -79,8 +76,9 @@ const contactCards = [
 
 export default function Contact(): React.ReactElement {
   const { startLoading: startGlobalLoading, stopLoading: stopGlobalLoading } = useLoading();
-  const abortControllerRef = useRef<AbortController>();
+  const abortControllerRef = useRef<AbortController | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Page-level state management
   const { 
@@ -178,6 +176,14 @@ export default function Contact(): React.ReactElement {
     };
   }, [stopGlobalLoading]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Memoized validation function
   const validateField = useCallback(
     debounce((name: keyof FormData, value: string) => {
@@ -261,8 +267,8 @@ export default function Contact(): React.ReactElement {
   }, [validateForm, startGlobalLoading, stopGlobalLoading]);
 
   // Loading state - only show on initial load
-  if ((isPageLoading && isInitialLoad) || !pageData?.socialLinks || !pageData?.contactInfo) {
-    return <PageLoading message="Loading contact information..." />;
+  if (isLoading) {
+    return <PageLoading />;
   }
 
   // Error state

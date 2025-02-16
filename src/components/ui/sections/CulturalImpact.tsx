@@ -1,9 +1,7 @@
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Users, Lightbulb, Globe } from 'lucide-react';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
-import { cn } from '@/lib/utils';
 
 interface Initiative {
   icon: any;

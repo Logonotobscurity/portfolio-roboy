@@ -1,19 +1,5 @@
-import { type ReactNode } from 'react';
-import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
 import { ChapterHeading } from '@/components/ui/typography/ChapterHeading';
-import { CTACard } from '@/components/ui/interactive/CTACard';
 import { ImageCard } from '@/components/ui/cards/ImageCard';
-import { cn } from '@/lib/utils';
-
-const nextChapterCTA = {
-  title: "Join Us on Our Journey",
-  description: "The journey has been amazing, but we're just getting started! We're excited to continue pushing the limits of entertainment and creating unforgettable experiences.",
-  buttonText: "Work with Us",
-  buttonHref: "#contact",
-  Icon: Zap,
-  pattern: "sankofa" as const
-};
 
 export function NextChapterSection() {
   return (

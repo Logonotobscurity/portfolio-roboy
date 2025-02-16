@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { preloadRoute } from '../config/routes';
+import type { RoutePath } from '../config/routes';
 
 interface UsePreloadOnVisibleOptions {
   threshold?: number;
@@ -7,7 +8,7 @@ interface UsePreloadOnVisibleOptions {
 }
 
 export function usePreloadOnVisible(
-  path: string,
+  path: RoutePath,
   options: UsePreloadOnVisibleOptions = {}
 ): (node: Element | null) => void {
   const observerRef = useRef<IntersectionObserver | null>(null);

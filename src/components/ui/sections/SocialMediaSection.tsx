@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
-import { Instagram, Twitter, Youtube, Music2, MessageCircle } from 'lucide-react';
+import { socialLinks } from '@/config/social-links';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
 import { SectionContainer } from '@/components/ui/layout/SectionContainer';
 import { SectionHeader } from '@/components/ui/layout/SectionHeader';
 import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
-import { socialLinks } from '@/config/social-links';
 
 export function SocialMediaSection() {
   return (

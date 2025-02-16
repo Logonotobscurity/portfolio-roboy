@@ -1,10 +1,8 @@
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { HOME_ROUTE } from '@/config/route-constants';
-import { cn } from '@/lib/utils';
 
-export default function NotFound(): JSX.Element {
+export function NotFound(): JSX.Element {
   return (
     <div className="min-h-screen flex items-center justify-center bg-retro-black text-retro-white p-4">
       <motion.div

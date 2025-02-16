@@ -17,11 +17,12 @@ export default {
         },
         'primary-dark': '#1A0099',
         'primary-light': '#4D33FF',
-        retro: {
-          black: '#0A0A0A',
-          white: '#F5F5F5',
-          gray: '#808080',
-        },
+        'retro-black': '#0a0a0a',
+        'retro-white': '#f0f0f0',
+        'retro-gray': '#2a2a2a',
+        'retro-green': '#00ff00',
+        'retro-green-bright': '#40ff40',
+        'retro-red': '#ff0000',
       },
       animation: {
         'gradient': 'gradient 8s linear infinite',

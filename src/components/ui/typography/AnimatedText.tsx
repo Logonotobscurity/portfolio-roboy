@@ -5,7 +5,6 @@ interface AnimatedTextProps {
   text: string;
   className?: string;
   delay?: number;
-  duration?: number;
   staggerChildren?: number;
 }
 
@@ -13,7 +12,6 @@ export default function AnimatedText({
   text,
   className,
   delay = 0,
-  duration = 0.05,
   staggerChildren = 0.1
 }: AnimatedTextProps) {
   const words = text.split(' ');

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
-import { Star, Award, Mic, Trophy, Globe, Users } from 'lucide-react';
+import { Star, Award, Trophy, Globe, Users } from 'lucide-react';
 
 interface TimelineEvent {
   title: string;

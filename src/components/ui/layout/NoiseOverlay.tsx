@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function NoiseOverlay() {
   return (
     <div className="pointer-events-none fixed inset-0 z-50 mix-blend-overlay">
