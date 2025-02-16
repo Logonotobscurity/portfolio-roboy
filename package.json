@@ -23,6 +23,7 @@
   "dependencies": {
     "@sentry/react": "9.1.0",
     "@tanstack/react-query": "5.66.0",
+    "cloudinary": "2.5.1",
     "framer-motion": "12.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
