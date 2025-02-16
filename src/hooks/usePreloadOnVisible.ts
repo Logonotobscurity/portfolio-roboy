@@ -6,11 +6,11 @@ interface PreloadOptions {
   rootMargin?: string;
 }
 
-export function usePreloadOnVisible(
+export function usePreloadOnVisible<T extends HTMLElement>(
   route: RoutePath,
   options: PreloadOptions = {}
 ) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<T | null>(null);
 
   useEffect(() => {
     const element = ref.current;

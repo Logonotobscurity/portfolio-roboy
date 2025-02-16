@@ -21,9 +21,9 @@ export const PreloadLink: React.FC<PreloadLinkProps> = ({
 
   return (
     <Link
-      ref={ref}
       to={to}
       {...props}
+      ref={ref}
     >
       {children}
     </Link>

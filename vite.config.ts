@@ -137,7 +137,7 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       }
     },
     server: {
-      port: 3001,
+      port: 3000,
       strictPort: true,
       host: true,
       open: true,
@@ -146,7 +146,7 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       }
     },
     preview: {
-      port: 4173,
+      port: 3000,
       strictPort: true,
       host: true,
       open: false

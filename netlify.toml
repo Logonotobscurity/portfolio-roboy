@@ -1,11 +1,12 @@
 [build]
-  command = "npm install --force && npm run build"
+  command = "npm install --legacy-peer-deps && npm run build"
   publish = "dist"
   functions = "netlify/functions"
+  base = "/"
 
 [build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--force"
+  NODE_VERSION = ">=20.x"
+  NPM_FLAGS = "--legacy-peer-deps"
   SHARP_IGNORE_GLOBAL_LIBVIPS = "1"
   SHARP_DIST_BASE_URL = "https://npmmirror.com/mirrors/sharp/0.33.5/"
   CI = "false"
@@ -22,15 +23,6 @@
   framework = "vite"
   targetPort = 3000
   autoLaunch = true
-
-[[plugins]]
-  package = "netlify-plugin-html-validate"
-  [plugins.inputs.netlify-plugin-html-validate]
-    ext = "html"
-    config = { extends = ["html-validate:recommended"], rules = { void-style = "off", no-trailing-whitespace = "off", element-required-attributes = "off" } }
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
 
 [[headers]]
   for = "/*"

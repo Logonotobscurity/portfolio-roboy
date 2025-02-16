@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "engines": {
-    "node": "20.x",
+    "node": ">=20.x",
     "npm": ">=9"
   },
   "scripts": {
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "7.0.2",
     "@hookform/resolvers": "4.1.0",
+    "@netlify/functions": "3.0.0",
     "@radix-ui/react-dialog": "1.1.6",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/container-queries": "0.1.1",
