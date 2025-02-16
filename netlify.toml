@@ -6,9 +6,9 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--force"
-  SHARP_IGNORE_GLOBAL_LIBVIPS = "true"
-  SHARP_DIST_BASE_URL = "https://sharp.pixelplumbing.com/vendor/v0.33.0/"
-  CI = "true"
+  SHARP_IGNORE_GLOBAL_LIBVIPS = "1"
+  SHARP_DIST_BASE_URL = "https://npmmirror.com/mirrors/sharp/0.33.5/"
+  CI = "false"
 
 [build.processing]
   skip_processing = true
@@ -25,11 +25,12 @@
 
 [[plugins]]
   package = "netlify-plugin-html-validate"
+  [plugins.inputs.netlify-plugin-html-validate]
+    ext = "html"
+    config = { extends = ["html-validate:recommended"], rules = { void-style = "off", no-trailing-whitespace = "off", element-required-attributes = "off" } }
 
-[plugins.inputs]
-  ext = "html"
-  config = { extends = ["html-validate:recommended"], rules = { void-style = "off", no-trailing-whitespace = "off", element-required-attributes = "off" } }
-  quiet = true
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[headers]]
   for = "/*"
@@ -42,7 +43,7 @@
     Cross-Origin-Opener-Policy = "same-origin"
     Cross-Origin-Embedder-Policy = "require-corp"
     Cross-Origin-Resource-Policy = "same-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; connect-src 'self' https://*.netlify.app https://api.yourbackend.com; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; block-all-mixed-content; upgrade-insecure-requests;"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:;"
     Permissions-Policy = "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), interest-cohort=()"
     Cache-Control = "public, max-age=0, must-revalidate"
     NEL = '{"report_to":"default","max_age":31536000,"include_subdomains":true}'
