@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Image, User, Mail, Menu, X, LucideIcon } from 'lucide-react';
 import { PreloadLink } from '@/components/ui/core/PreloadLink';
 import Logo from '@/components/ui/branding/Logo';
+import { RoutePath } from '@/config/routes';
 
 interface NavLink {
-  path: string;
+  path: RoutePath;
   icon: LucideIcon;
   label: string;
 }

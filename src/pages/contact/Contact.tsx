@@ -82,9 +82,7 @@ export default function Contact(): React.ReactElement {
   
   // Page-level state management
   const { 
-    isLoading: isPageLoading, 
-    error: pageError, 
-    data: pageData,
+    error: pageError
   } = usePageState<ContactPageData>({
     loadingFn: async () => {
       abortControllerRef.current = new AbortController();

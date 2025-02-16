@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import { usePreloadOnVisible } from '@/hooks/usePreloadOnVisible';
-import { isValidRoute } from '@/config/routes';
+import { RoutePath } from '@/config/routes';
 
 interface PreloadLinkProps extends Omit<LinkProps, 'to'> {
-  to: string;
+  to: RoutePath;
   preloadOptions?: {
     threshold?: number;
     rootMargin?: string;
@@ -17,12 +17,11 @@ export const PreloadLink: React.FC<PreloadLinkProps> = ({
   children,
   ...props
 }) => {
-  const shouldPreload = isValidRoute(to);
   const ref = usePreloadOnVisible(to, preloadOptions);
 
   return (
     <Link
-      ref={shouldPreload ? ref : undefined}
+      ref={ref}
       to={to}
       {...props}
     >
