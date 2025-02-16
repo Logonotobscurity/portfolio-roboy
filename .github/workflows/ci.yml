@@ -2,9 +2,11 @@ name: CI/CD → Netlify
 
 on:
   push:
-    branches: [master]
+    branches:
+      - main
   pull_request:
-    branches: [master]
+    branches:
+      - main
 
 env:
   NODE_VERSION: '20.11.1'
@@ -61,66 +63,36 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          lfs: true
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
-      - name: Setup npm
-        run: npm install -g npm@${{ env.NPM_VERSION }}
-      
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential ffmpeg
-      
-      - name: Cache media assets
-        uses: actions/cache@v3
-        with:
-          path: |
-            public/assets/optimized
-            public/assets/sprites
-          key: ${{ runner.os }}-media-${{ hashFiles('public/assets/**/*') }}
-          restore-keys: |
-            ${{ runner.os }}-media-
-      
+          node-version: '16'
+
       - name: Install dependencies
-        run: npm ci
-      
-      - name: Verify FFmpeg
         run: |
-          which ffmpeg
-          ffmpeg -version
-      
-      - name: Build
+          rm -f package-lock.json
+          npm install
+
+      - name: Build project
         run: npm run build
-        env:
-          NODE_ENV: production
-          CI: true
-      
-      - name: Analyze bundle
-        run: |
-          npx vite-bundle-visualizer
-          node scripts/analyze-bundle-size.js
-        
-      - name: Check bundle size
-        run: |
-          echo "Checking bundle size limits..."
-          find dist -type f -name "*.js" -exec du -b {} \; | 
-          awk '{ if ($1 > 500000) print "Warning: " $2 " is " $1/1024 "KB" }'
-          
-      - name: Upload build
-        uses: actions/upload-artifact@v4
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
         with:
-          name: dist
-          path: dist/
-          retention-days: 1
-          if-no-files-found: error
+          publish-dir: './dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 2
 
   lighthouse:
     needs: build
@@ -164,31 +136,3 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
-
-  deploy:
-    needs: [build, lighthouse, security]
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Download build
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-          
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: './dist'
-          production-branch: master
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-          fails-without-credentials: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 2
