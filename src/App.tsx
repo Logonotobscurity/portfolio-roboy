@@ -5,6 +5,7 @@ import { ErrorBoundary } from '@/components/ui/core/ErrorBoundary';
 import { PageError } from '@/components/PageError';
 import { Suspense, lazy } from 'react';
 import { PageLoading } from '@/components/ui/feedback/PageLoading';
+import { SentryTest } from './components/SentryTest';
 
 // Lazy load pages
 const Home = lazy(() => import('@/pages/home/Home'));
@@ -32,6 +33,7 @@ export default function App() {
             </AnimatePresence>
           </Suspense>
         </main>
+        <SentryTest />
       </div>
     </ErrorBoundary>
   );

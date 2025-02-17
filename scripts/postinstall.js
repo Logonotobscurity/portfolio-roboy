@@ -1,28 +1,51 @@
-import { execSync } from 'child_process';
+import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-try {
+async function runPostInstall() {
   console.log('Running postinstall script...');
-  
-  // Set environment variables for Sharp
-  process.env.SHARP_IGNORE_GLOBAL_LIBVIPS = '1';
-  process.env.SHARP_DIST_BASE_URL = 'https://npmmirror.com/mirrors/sharp';
-  
-  if (process.env.CI) {
-    console.log('Running in CI environment...');
-    // Install build essentials in CI environment
-    if (process.platform === 'linux') {
-      console.log('Installing build dependencies...');
-      execSync('apt-get update && apt-get install -y build-essential');
+
+  try {
+    // Ensure required directories exist
+    const dirs = [
+      'public',
+      'public/images',
+      'src/assets/images',
+      'netlify/functions'
+    ];
+
+    for (const dir of dirs) {
+      await fs.mkdir(dir, { recursive: true });
     }
+
+    // Check if .env file exists, if not create from example
+    try {
+      await fs.access('.env');
+    } catch {
+      const envExample = await fs.readFile('.env.example', 'utf-8');
+      await fs.writeFile('.env', envExample);
+      console.log('✅ Created .env file from .env.example');
+    }
+
+    // Install additional dependencies if needed
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        execSync('npm install -D @types/sharp @types/node', { stdio: 'inherit' });
+        console.log('✅ Installed development dependencies');
+      } catch (error) {
+        console.warn('⚠️ Failed to install some dev dependencies:', error.message);
+      }
+    }
+
+    console.log('✨ Postinstall completed successfully');
+  } catch (error) {
+    console.error('❌ Error during postinstall:', error);
+    process.exit(1);
   }
-  
-  console.log('Postinstall completed successfully');
-} catch (error) {
-  console.error('Postinstall script failed:', error);
-  process.exit(1);
-} 
+}
+
+runPostInstall();

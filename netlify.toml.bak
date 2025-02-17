@@ -1,19 +1,20 @@
 [build]
-  command = "NODE_OPTIONS='--max-old-space-size=6144' npm ci && npm run build:core && npm run build:functions && npm run build:client"
+  command = "NODE_OPTIONS='--max-old-space-size=6144' npm ci && npm run build"
   publish = "dist"
   functions = "netlify/functions"
   base = "/"
-  ignore = "git diff --quiet 'HEAD^' HEAD ./src"
-
+  ignore = "git diff --quiet HEAD^ HEAD ./src"
+  
 [build.environment]
   NODE_VERSION = "20.12.2"
   NPM_VERSION = "10.7.0"
   SHARP_IGNORE_GLOBAL_LIBVIPS = "1"
+  SHARP_DIST_BASE_URL = "https://npmmirror.com/mirrors/sharp/0.33.5/"
   CI = "true"
   NETLIFY_USE_YARN = "false"
-  # Set in Netlify UI:
-  SENTRY_DSN = "@sentry_dsn"
-  SENTRY_ENABLED = "@sentry_enabled"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  SHARP_LIBVIPS_VERSION = "8.14.5"
+  VITE_ENABLE_SENTRY = "true"
 
 [build.processing]
   skip_processing = false
@@ -24,14 +25,14 @@
   images.compress = true
 
 [build.processing.images]
-  quality = 75
-  formats = ["webp", "avif", "auto"]
+  quality = 85
+  formats = ["webp", "avif"]
 
 [build.processing.html]
   pretty_urls = true
   link_masking = true
 
-# Cache Headers
+# Cache Control
 [[headers]]
   for = "/assets/*"
   [headers.values]
@@ -65,71 +66,71 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://*.sentry.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.netlify.app; connect-src 'self' https://*.sentry.io""
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: *.sentry.io; media-src 'self' https:; object-src 'none'; frame-ancestors 'none';"
     Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
 
-# Environment Contexts
+# Production context with optimizations
 [context.production]
   command = "npm ci && npm run build"
   publish = "dist"
   [context.production.environment]
     NODE_ENV = "production"
     VITE_APP_ENV = "production"
+    CI = "true"
+    # Sentry variables will be set in Netlify UI
 
+# Deploy Preview optimizations
 [context.deploy-preview]
-  command = "npm ci && npm run build:preview"
+  command = "npm ci && npm run build"
   [context.deploy-preview.environment]
     NODE_ENV = "preview"
     VITE_APP_ENV = "preview"
+    CI = "true"
+    VITE_ENABLE_SENTRY = "true"
 
+# Branch deploy optimizations
 [context.branch-deploy]
   command = "npm ci && npm run build"
   [context.branch-deploy.environment]
     NODE_ENV = "development"
     VITE_APP_ENV = "development"
+    VITE_ENABLE_SENTRY = "true"
 
-# Development Server
+# Development optimization
 [dev]
   framework = "vite"
   targetPort = 3000
   autoLaunch = true
   command = "npm run dev"
 
-# Functions Configuration
+# Function optimization
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["sharp", "aws-sdk"]
+  external_node_modules = ["sharp"]
   included_files = ["dist/**"]
   directory = "netlify/functions"
 
-# Plugins
+# Plugins for optimization
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+[[plugins]]
+  package = "netlify-plugin-submit-sitemap"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [[plugins]]
   package = "@netlify/plugin-cache"
   [plugins.inputs]
     paths = [
       "node_modules/.cache/vite",
-      "node_modules/.pnpm-store",
-      "public/locales",
+      "node_modules/.cache/babel",
+      "node_modules/.cache/postcss",
       "dist"
     ]
 
-[[plugins]]
-  package = "@netlify/plugin-bundle-budgets"
-  [plugins.inputs]
-    budgets = [
-      { resourceType: "javascript", maximumSize: "300kB" },
-      { resourceType: "image", maximumSize: "1MB" }
-    ]
-
-[[plugins]]
-  package = "netlify-plugin-submit-sitemap"
-
-# Redirects
-[[redirects]]
-  from = "/healthz"
-  to = "/.netlify/functions/healthcheck"
-  status = 200
-
+# Redirects and rewrites
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -141,6 +142,7 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Error page handling
 [[redirects]]
   from = "/*"
   to = "/404.html"

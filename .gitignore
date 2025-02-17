@@ -39,3 +39,6 @@ yarn-error.log*
 # Large media files
 public/videos/hero-intro.mp4
 !public/videos/optimized/hero-intro.mp4
+
+# Sentry Config File
+.env.sentry-build-plugin

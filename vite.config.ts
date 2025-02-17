@@ -1,40 +1,54 @@
 /// <reference types="vitest" />
 import { defineConfig, loadEnv, UserConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { OutputOptions } from 'rollup';
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Performance budgets
-const CHUNK_SIZE_WARNING = 500; // KB
-const CHUNK_SIZE_ERROR = 1000; // KB
+const CHUNK_SIZE_WARNING = 300; // Reduced from 500KB
+const CHUNK_SIZE_ERROR = 500;   // Reduced from 1MB
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }: { mode: string }): UserConfig => {
-  // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '');
-  const isGitHubPages = env.GITHUB_PAGES === 'true';
+  const isProd = mode === 'production';
   
   return {
-    base: isGitHubPages ? '/portfolioRoboy/' : '/',
+    base: env.GITHUB_PAGES === 'true' ? '/portfolioRoboy/' : '/',
     plugins: [
-      react({
-        jsxRuntime: 'automatic',
-        babel: {
-          babelrc: false,
-          configFile: false
-        }
+      isProd && sentryVitePlugin({
+        org: "rooboy",
+        project: "portfolio-roboy",
+        authToken: env.SENTRY_AUTH_TOKEN,
+        sourcemaps: {
+          assets: "./dist/**",
+          ignore: ['node_modules/**', '**/*.css'],
+          filesToDeleteAfterUpload: ['./dist/**/*.map'],
+        },
+        release: {
+          name: `portfolio-roboy@${env.VITE_APP_VERSION}`,
+          setCommits: {
+            auto: true,
+            ignoreMissing: true,
+          },
+        },
+        telemetry: false,
       }),
-      mode === 'production' && visualizer({
-        filename: 'dist/stats.html',
+      react({
+        jsxImportSource: '@emotion/react',
+        plugins: [['@swc/plugin-emotion', {}]],
+      }),
+      isProd && visualizer({
+        filename: 'dist/bundle-stats.html',
+        template: 'network',
         gzipSize: true,
         brotliSize: true,
-        template: 'treemap',
-        open: true
+        open: false
       }),
     ].filter(Boolean),
     resolve: {
@@ -43,128 +57,90 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
         '@components': path.resolve(__dirname, './src/components'),
         '@assets': path.resolve(__dirname, './public/assets')
       },
-      dedupe: ['react', 'react-dom', 'lucide-react', '@tanstack/react-query', '@tanstack/react-router'],
-      mainFields: ['module', 'jsnext:main', 'jsnext', 'main']
+      dedupe: ['react', 'react-dom'],
     },
     build: {
-      target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
-      minify: mode === 'production' ? 'esbuild' : false,
-      cssMinify: mode === 'production',
-      modulePreload: {
-        polyfill: true
-      },
+      target: 'es2022',
+      minify: isProd ? 'terser' : false,
+      cssCodeSplit: true,
+      cssMinify: isProd,
+      modulePreload: { polyfill: false },
       rollupOptions: {
         external: [/@rollup\/rollup-linux-.*-gnu/],
         output: {
-          manualChunks: {
-            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-            'ui-vendor': ['framer-motion', 'sonner'],
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('@sentry')) return 'vendor-sentry';
+              if (id.includes('@radix-ui')) return 'vendor-radix';
+              if (id.includes('framer-motion')) return 'vendor-motion';
+              if (id.includes('@tanstack')) return 'vendor-query';
+              return 'vendor';
+            }
           },
-          format: 'es',
-          assetFileNames: (assetInfo: { name?: string }) => {
-            if (!assetInfo?.name) return 'assets/[name]-[hash][extname]';
-            const info = assetInfo.name.split('.');
-            const ext = info[info.length - 1];
-            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
-              return `assets/images/[name]-[hash][extname]`;
-            }
-            if (/woff2?|ttf|eot/i.test(ext)) {
-              return `assets/fonts/[name]-[hash][extname]`;
-            }
-            return `assets/[name]-[hash][extname]`;
-          },
-          chunkFileNames: (chunkInfo) => {
-            if (chunkInfo.name?.includes('page-')) {
-              return 'js/pages/[name]-[hash].js';
-            }
-            if (chunkInfo.name?.includes('section-')) {
-              return 'js/sections/[name]-[hash].js';
-            }
-            return 'js/[name]-[hash].js';
-          },
+          assetFileNames: 'assets/[name]-[hash][extname]',
+          chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
           compact: true,
-          generatedCode: {
-            arrowFunctions: true,
-            constBindings: true,
-            objectShorthand: true
-          }
-        } as OutputOptions
+          generatedCode: 'es2015',
+          sourcemapPathTransform: (relativePath) => 
+            `/~/${relativePath.replace('../', '')}`,
+        } as OutputOptions,
+        treeshake: {
+          preset: 'recommended',
+          moduleSideEffects: false,
+        },
       },
-      sourcemap: mode !== 'production',
-      assetsInlineLimit: 4096,
+      sourcemap: isProd ? 'hidden' : false,
+      assetsInlineLimit: 8192,
       chunkSizeWarningLimit: CHUNK_SIZE_WARNING,
-      emptyOutDir: true,
-      reportCompressedSize: true,
-      copyPublicDir: true,
-      outDir: 'dist',
+      reportCompressedSize: false,
       terserOptions: {
         compress: {
-          drop_console: mode === 'production',
-          drop_debugger: mode === 'production',
-          pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : []
+          drop_console: true,
+          passes: 2,
+          ecma: 2020,
         },
-        mangle: true
-      }
+        format: {
+          comments: false,
+          ecma: 2020,
+        },
+        mangle: {
+          properties: {
+            regex: /^_/,
+          },
+        },
+      },
     },
     optimizeDeps: {
       include: [
         'react', 
-        'react-dom', 
-        'react-router-dom',
-        '@tanstack/react-query',
-        'framer-motion',
+        'react-dom',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
-        'react-dom/client',
-        'lucide-react',
-        'clsx',
-        'tailwind-merge'
       ],
-      exclude: [],
       esbuildOptions: {
-        target: 'es2020',
-        supported: {
-          'top-level-await': true
-        },
+        target: 'es2022',
         legalComments: 'none',
-        jsx: 'automatic',
-        treeShaking: true,
-        minify: true,
-        mainFields: ['module', 'main'],
-        conditions: ['import', 'module', 'default'],
-        resolveExtensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
-      }
+        minifyIdentifiers: isProd,
+        minifySyntax: isProd,
+        minifyWhitespace: isProd,
+      },
     },
     server: {
       port: 3000,
       strictPort: true,
-      host: true,
-      open: true,
-      hmr: {
-        overlay: true
-      }
-    },
-    preview: {
-      port: 3000,
-      strictPort: true,
-      host: true,
-      open: false
+      hmr: { overlay: false },
+      fs: { strict: true },
     },
     test: {
-      globals: true,
       environment: 'jsdom',
-      setupFiles: ['./src/test/setup.ts'],
-      include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      setupFiles: './src/test/setup.ts',
       coverage: {
         provider: 'v8',
-        reporter: ['text', 'json', 'html'],
-        exclude: [
-          'node_modules/',
-          'src/test/setup.ts',
-        ]
+        reporter: ['text', 'lcov'],
+        exclude: ['**/__mocks__/**', '**/*.d.ts'],
       },
-      css: true,
+      css: false,
     },
   };
 });
