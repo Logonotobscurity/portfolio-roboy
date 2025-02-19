@@ -1,0 +1,27 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%    # the required coverage value
+        threshold: 2%  # the leniency in hitting the target
+    patch:
+      default:
+        target: 80%
+        threshold: 2%
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+
+github_checks:
+  annotations: true
+
+ignore:
+  - "**/*.test.{ts,tsx}"
+  - "**/*.spec.{ts,tsx}"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/stories/**"
+  - "**/*.stories.{ts,tsx}" 

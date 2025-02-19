@@ -1,0 +1,23 @@
+# These owners will be the default owners for everything in the repo
+* @Logonotobscurity
+
+# Production configuration files
+.env.production @Logonotobscurity
+netlify.toml @Logonotobscurity
+.github/workflows/* @Logonotobscurity
+
+# Security-sensitive files
+.github/environments/* @Logonotobscurity
+src/utils/security/* @Logonotobscurity
+
+# Frontend core components
+src/components/ui/* @Logonotobscurity
+src/providers/* @Logonotobscurity
+
+# API and backend functions
+netlify/functions/* @Logonotobscurity
+src/api/* @Logonotobscurity
+
+# Documentation
+*.md @Logonotobscurity
+docs/* @Logonotobscurity 

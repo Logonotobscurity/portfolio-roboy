@@ -68,17 +68,17 @@ export function VideoHero({
           )}
         </video>
         <div 
-          className={`absolute inset-0 bg-gradient-to-t from-retro-black via-retro-black/80 to-transparent transition-opacity duration-500 ${
+          className={`absolute inset-0 bg-gradient-to-t from-retro-black via-retro-black/90 to-transparent transition-opacity duration-500 ${
             isVideoLoaded ? 'opacity-100' : 'opacity-0'
           }`} 
         />
       </div>
 
       {/* Enhanced Pattern Overlays */}
-      <PatternOverlay variant="dots" className="opacity-40" />
-      <PatternOverlay variant="lines" className="opacity-60" />
-      <PatternOverlay variant="grid" className="opacity-[0.15]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.5)_100%)]" />
+      <PatternOverlay variant="dots" className="opacity-30" />
+      <PatternOverlay variant="lines" className="opacity-40" />
+      <PatternOverlay variant="grid" className="opacity-[0.12]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.6)_100%)]" />
 
       {/* Content */}
       <div className="relative flex min-h-[80vh] items-center">
@@ -92,12 +92,12 @@ export function VideoHero({
           >
             <GlitchText
               text={title}
-              className="font-display text-4xl font-bold leading-tight text-retro-white md:text-6xl lg:text-7xl"
+              className="font-display text-4xl font-bold leading-tight text-retro-white md:text-6xl lg:text-7xl [text-shadow:_0_0_15px_rgba(45,0,247,0.3)]"
             />
 
             {subtitle && (
               <motion.p
-                className="mt-4 font-mono text-lg text-primary md:text-xl lg:text-2xl"
+                className="mt-4 font-mono text-lg text-primary-text md:text-xl lg:text-2xl [text-shadow:_0_0_10px_rgba(139,127,255,0.4)]"
                 variants={fadeInUpVariants}
                 custom={0.7}
               >
@@ -107,7 +107,7 @@ export function VideoHero({
 
             {description && (
               <motion.p
-                className="mt-6 max-w-2xl text-lg text-gray-300 lg:text-xl"
+                className="mt-6 max-w-2xl text-lg text-gray-200 lg:text-xl [text-shadow:_0_0_8px_rgba(240,240,240,0.2)]"
                 variants={fadeInUpVariants}
                 custom={0.9}
               >
@@ -125,13 +125,14 @@ export function VideoHero({
                   to={ctaLink}
                   className="
                     group relative inline-block overflow-hidden rounded-full border-2 border-primary
-                    bg-black/50 px-8 py-3 font-mono text-lg text-primary backdrop-blur-sm
-                    transition-all duration-300 hover:border-transparent hover:text-white
-                    hover:shadow-[0_0_15px_rgba(45,0,247,0.5)] lg:text-xl
+                    bg-black/60 px-8 py-3 font-mono text-lg text-primary-text backdrop-blur-sm
+                    transition-all duration-300 hover:bg-primary/90 hover:text-white hover:border-primary-light 
+                    hover:shadow-[0_0_20px_rgba(107,76,245,0.6)] focus:outline-none focus:ring-2 
+                    focus:ring-primary-light focus:ring-offset-2 focus:ring-offset-black lg:text-xl
                   "
                 >
                   <span className="relative z-10">{ctaText}</span>
-                  <div className="absolute inset-0 -z-0 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute inset-0 -z-0 bg-gradient-to-r from-primary/90 to-primary-light opacity-0 transition-all duration-300 group-hover:opacity-100" />
                 </Link>
               </motion.div>
             )}

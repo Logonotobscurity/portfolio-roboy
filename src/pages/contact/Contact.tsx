@@ -184,25 +184,30 @@ export default function Contact(): React.ReactElement {
 
   // Memoized validation function
   const validateField = useCallback(
-    debounce((name: keyof FormData, value: string) => {
-      try {
-        const partialSchema = {
-          name: name === 'name' ? formSchema.shape.name : undefined,
-          email: name === 'email' ? formSchema.shape.email : undefined,
-          message: name === 'message' ? formSchema.shape.message : undefined
-        };
-        const fieldSchema = z.object({
-          [name]: partialSchema[name] as z.ZodString
-        });
-        fieldSchema.parse({ [name]: value });
-        setErrors(prev => ({ ...prev, [name]: undefined }));
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          const fieldError = error.errors[0]?.message;
-          setErrors(prev => ({ ...prev, [name]: fieldError }));
+    (name: keyof FormData, value: string) => {
+      const debouncedValidation = debounce(() => {
+        try {
+          const partialSchema = {
+            name: name === 'name' ? formSchema.shape.name : undefined,
+            email: name === 'email' ? formSchema.shape.email : undefined,
+            message: name === 'message' ? formSchema.shape.message : undefined
+          };
+          const fieldSchema = z.object({
+            [name]: partialSchema[name] as z.ZodString
+          });
+          fieldSchema.parse({ [name]: value });
+          setErrors(prev => ({ ...prev, [name]: undefined }));
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            const fieldError = error.errors[0]?.message;
+            setErrors(prev => ({ ...prev, [name]: fieldError }));
+          }
         }
-      }
-    }, 300),
+      }, 300);
+
+      debouncedValidation();
+      return () => debouncedValidation.cancel();
+    },
     []
   );
 
@@ -336,7 +341,7 @@ export default function Contact(): React.ReactElement {
                           {card.isLocation ? (
                             <>
                               <p className="text-sm sm:text-base text-gray-300">{card.content}</p>
-                              <p className="text-xs sm:text-sm text-primary mt-1">{card.description}</p>
+                              <p className="text-xs sm:text-sm text-primary-small mt-1">{card.description}</p>
                             </>
                           ) : (
                             <>
@@ -346,7 +351,7 @@ export default function Contact(): React.ReactElement {
                               >
                                 {card.content}
                               </a>
-                              <p className="text-xs sm:text-sm text-gray-400 mt-1">{card.description}</p>
+                              <p className="text-xs sm:text-sm text-primary-small mt-1">{card.description}</p>
                             </>
                           )}
                         </div>
@@ -374,7 +379,7 @@ export default function Contact(): React.ReactElement {
               </div>
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-primary-text mb-1">
                     Name
                   </label>
                   <input
@@ -395,7 +400,7 @@ export default function Contact(): React.ReactElement {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-primary-text mb-1">
                     Email
                   </label>
                   <input
@@ -416,7 +421,7 @@ export default function Contact(): React.ReactElement {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
+                  <label htmlFor="message" className="block text-sm font-medium text-primary-text mb-1">
                     Message
                   </label>
                   <textarea

@@ -41,7 +41,13 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       }),
       react({
         jsxImportSource: '@emotion/react',
-        plugins: [['@swc/plugin-emotion', {}]],
+        plugins: [
+          ['@swc/plugin-emotion', {
+            sourceMap: !isProd,
+            autoLabel: 'dev-only',
+            labelFormat: '[local]',
+          }]
+        ],
       }),
       isProd && visualizer({
         filename: 'dist/bundle-stats.html',

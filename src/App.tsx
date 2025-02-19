@@ -6,6 +6,9 @@ import { PageError } from '@/components/PageError';
 import { Suspense, lazy } from 'react';
 import { PageLoading } from '@/components/ui/feedback/PageLoading';
 import { SentryTest } from './components/SentryTest';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { ThemeToggle } from './components/ThemeToggle';
+import './styles/theme.css';
 
 // Lazy load pages
 const Home = lazy(() => import('@/pages/home/Home'));
@@ -17,24 +20,27 @@ export default function App() {
   const location = useLocation();
 
   return (
-    <ErrorBoundary fallback={<PageError message="Something went wrong" />}>
-      <div className="flex min-h-screen flex-col bg-retro-black">
-        <Navigation />
-        
-        <main className="flex-1">
-          <Suspense fallback={<PageLoading />}>
-            <AnimatePresence mode="wait">
-              <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Home />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-              </Routes>
-            </AnimatePresence>
-          </Suspense>
-        </main>
-        <SentryTest />
-      </div>
-    </ErrorBoundary>
+    <ThemeProvider>
+      <ErrorBoundary fallback={<PageError message="Something went wrong" />}>
+        <div className="flex min-h-screen flex-col">
+          <Navigation />
+          
+          <main className="flex-1">
+            <Suspense fallback={<PageLoading />}>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                </Routes>
+              </AnimatePresence>
+            </Suspense>
+          </main>
+          <SentryTest />
+        </div>
+        <ThemeToggle />
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }

@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
-import { Heart, Users, Lightbulb, Globe } from 'lucide-react';
+import { Heart, Users, Lightbulb, Globe, LucideIcon } from 'lucide-react';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
 import { PatternOverlay } from '@/components/ui/layout/PatternOverlay';
 import { ChapterHeading } from '@/components/ui/typography/ChapterHeading';
 
 interface Initiative {
-  icon: any;
+  icon: LucideIcon;
   title: string;
   description: string;
 }

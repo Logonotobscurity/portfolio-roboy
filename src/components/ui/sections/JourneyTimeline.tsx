@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { RetroCard } from '@/components/ui/interactive/RetroCard';
-import { Star, Award, Trophy, Globe, Users } from 'lucide-react';
+import { Star, Award, Trophy, Globe, Users, LucideIcon } from 'lucide-react';
 
 interface TimelineEvent {
   title: string;
   description: string;
-  icon: any;
+  icon: LucideIcon;
   achievements: string[];
   highlight?: string;
 }
@@ -96,7 +96,7 @@ export function JourneyTimeline() {
                     <event.icon className="relative h-full w-full p-2 sm:p-2.5 text-primary opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
                   {event.highlight && (
-                    <div className="mt-1 sm:mt-2 text-center font-mono text-xs text-primary">
+                    <div className="mt-1 sm:mt-2 text-center font-mono text-xs text-primary-small">
                       {event.highlight}
                     </div>
                   )}

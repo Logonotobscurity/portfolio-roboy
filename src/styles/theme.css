@@ -1,0 +1,164 @@
+/* Base Theme Styles */
+:root {
+  /* Colors will be set dynamically by ThemeProvider */
+  color-scheme: light dark;
+  
+  /* Default font settings */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Styles */
+body {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  font-family: var(--font-family, system-ui, -apple-system, sans-serif);
+  transition: background-color var(--transition-default),
+              color var(--transition-default),
+              border-color var(--transition-default);
+  line-height: 1.5;
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* Theme-specific styles */
+.theme-light {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.theme-dark {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Theme Toggle Button Styles */
+.theme-toggle {
+  /* Mobile-first positioning */
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: all var(--transition-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  /* Improved shadow for better visibility */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1),
+              0 4px 6px rgba(0, 0, 0, 0.06);
+  /* Prevent text selection */
+  user-select: none;
+  /* Smooth backdrop blur effect */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* Ensure button stays clickable */
+  touch-action: manipulation;
+}
+
+/* Hover effects - only on devices that support hover */
+@media (hover: hover) {
+  .theme-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15),
+                0 6px 8px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary);
+  }
+}
+
+/* Active state for better touch feedback */
+.theme-toggle:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Adjust positioning for larger screens */
+@media (min-width: 640px) {
+  .theme-toggle {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.625rem;
+  }
+}
+
+/* Adjust for larger screens */
+@media (min-width: 1024px) {
+  .theme-toggle {
+    bottom: 2rem;
+    right: 2rem;
+  }
+}
+
+/* Safe area adjustments for modern mobile devices */
+@supports (padding: max(0px)) {
+  .theme-toggle {
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Reduce motion if user prefers it */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition: none;
+  }
+}
+
+/* Utility Classes */
+.text-primary { color: var(--color-primary) !important; }
+.text-secondary { color: var(--color-secondary) !important; }
+.text-accent { color: var(--color-accent) !important; }
+.text-error { color: var(--color-error) !important; }
+.text-success { color: var(--color-success) !important; }
+
+.bg-surface { background-color: var(--color-surface) !important; }
+.bg-primary { background-color: var(--color-primary) !important; }
+.bg-accent { background-color: var(--color-accent) !important; }
+
+/* Typography Scale */
+.text-sm { font-size: var(--font-size-sm) !important; }
+.text-base { font-size: var(--font-size-base) !important; }
+.text-lg { font-size: var(--font-size-lg) !important; }
+.text-xl { font-size: var(--font-size-xl) !important; }
+.text-2xl { font-size: var(--font-size-2xl) !important; }
+
+/* Font Weights */
+.font-normal { font-weight: var(--font-weight-normal) !important; }
+.font-medium { font-weight: var(--font-weight-medium) !important; }
+.font-semibold { font-weight: var(--font-weight-semibold) !important; }
+.font-bold { font-weight: var(--font-weight-bold) !important; }
+
+/* Spacing */
+.p-xs { padding: var(--spacing-xs) !important; }
+.p-sm { padding: var(--spacing-sm) !important; }
+.p-md { padding: var(--spacing-md) !important; }
+.p-lg { padding: var(--spacing-lg) !important; }
+.p-xl { padding: var(--spacing-xl) !important; }
+
+.m-xs { margin: var(--spacing-xs) !important; }
+.m-sm { margin: var(--spacing-sm) !important; }
+.m-md { margin: var(--spacing-md) !important; }
+.m-lg { margin: var(--spacing-lg) !important; }
+.m-xl { margin: var(--spacing-xl) !important; }
+
+/* Border Radius */
+.rounded-sm { border-radius: var(--radius-sm) !important; }
+.rounded-md { border-radius: var(--radius-md) !important; }
+.rounded-lg { border-radius: var(--radius-lg) !important; }
+.rounded-xl { border-radius: var(--radius-xl) !important; } 

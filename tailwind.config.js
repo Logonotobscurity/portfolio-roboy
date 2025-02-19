@@ -14,6 +14,8 @@ export default {
         primary: {
           DEFAULT: '#2D00F7',
           light: '#6B4CF5',
+          text: '#8B7FFF',
+          small: '#A599FF',
         },
         'primary-dark': '#1A0099',
         'primary-light': '#4D33FF',

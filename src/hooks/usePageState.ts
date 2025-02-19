@@ -41,7 +41,7 @@ export function usePageState<T>({
           setIsLoading(false);
         });
     }
-  }, [loadingFn]);
+  }, [loadingFn, onError]);
 
   return {
     isLoading,

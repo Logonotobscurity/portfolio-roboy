@@ -1,0 +1,39 @@
+{
+  "environments": {
+    "production": {
+      "wait_timer": 5,
+      "required_reviewers": ["Logonotobscurity"],
+      "deployment_branch_policy": {
+        "protected_branches": true,
+        "custom_branch_policies": false
+      },
+      "required_contexts": ["verify", "enforce-checks", "security-scan"]
+    },
+    "preview": {
+      "wait_timer": 0,
+      "auto_deploy": true,
+      "deployment_branch_policy": {
+        "protected_branches": false,
+        "custom_branch_policies": true
+      },
+      "required_contexts": ["enforce-checks"]
+    }
+  },
+  "branch_policies": {
+    "master": {
+      "protection": {
+        "required_pull_request_reviews": {
+          "required_approving_review_count": 1,
+          "dismiss_stale_reviews": true,
+          "require_code_owner_reviews": true
+        },
+        "required_status_checks": {
+          "strict": true,
+          "contexts": ["verify", "enforce-checks", "security-scan"]
+        },
+        "enforce_admins": true,
+        "restrictions": null
+      }
+    }
+  }
+}

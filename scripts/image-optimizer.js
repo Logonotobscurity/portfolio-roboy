@@ -1,21 +1,55 @@
-const sharp = require('sharp');
-const fs = require('fs').promises;
-const path = require('path');
+import sharp from 'sharp';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const INPUT_DIR = 'src/assets/images';
-const OUTPUT_DIR = 'public/images';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-async function optimizeImage(inputPath, outputPath) {
+const INPUT_DIR = path.join(path.dirname(__dirname), 'src/assets/images');
+const OUTPUT_DIR = path.join(path.dirname(__dirname), 'public/images');
+
+const FORMATS = ['webp', 'avif', 'jpg'];
+const SIZES = {
+  thumbnail: { width: 150, height: 150 },
+  small: { width: 300, height: 300 },
+  medium: { width: 800, height: 800 },
+  large: { width: 1920, height: 1080 }
+};
+
+async function optimizeImage(inputPath, outputPath, format, size) {
   try {
-    await sharp(inputPath)
-      .resize(1920, 1080, {
+    const pipeline = sharp(inputPath)
+      .resize(size.width, size.height, {
         fit: 'inside',
         withoutEnlargement: true,
-      })
-      .webp({ quality: 80 })
-      .toFile(outputPath);
+      });
 
-    console.log(`✅ Optimized: ${path.basename(inputPath)}`);
+    // Apply format-specific optimizations
+    switch (format) {
+      case 'webp':
+        pipeline.webp({ 
+          quality: 80,
+          effort: 6 // Higher compression effort
+        });
+        break;
+      case 'avif':
+        pipeline.avif({ 
+          quality: 65,
+          effort: 9 // Maximum compression effort
+        });
+        break;
+      case 'jpg':
+        pipeline.jpeg({ 
+          quality: 85,
+          progressive: true,
+          mozjpeg: true // Use mozjpeg for better compression
+        });
+        break;
+    }
+
+    await pipeline.toFile(outputPath);
+    console.log(`✅ Optimized: ${path.basename(outputPath)}`);
   } catch (error) {
     console.error(`❌ Error optimizing ${inputPath}:`, error);
   }
@@ -34,14 +68,18 @@ async function processImages() {
 
     console.log(`🔍 Found ${imageFiles.length} images to optimize`);
 
-    // Process each image
-    const optimizationPromises = imageFiles.map(file => {
+    // Process each image in all formats and sizes
+    const optimizationPromises = imageFiles.flatMap(file => {
       const inputPath = path.join(INPUT_DIR, file);
-      const outputPath = path.join(
-        OUTPUT_DIR,
-        `${path.parse(file).name}.webp`
+      const baseName = path.parse(file).name;
+      
+      return FORMATS.flatMap(format => 
+        Object.entries(SIZES).map(([sizeName, dimensions]) => {
+          const outputFileName = `${baseName}-${sizeName}.${format}`;
+          const outputPath = path.join(OUTPUT_DIR, outputFileName);
+          return optimizeImage(inputPath, outputPath, format, dimensions);
+        })
       );
-      return optimizeImage(inputPath, outputPath);
     });
 
     await Promise.all(optimizationPromises);

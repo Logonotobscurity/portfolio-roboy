@@ -86,7 +86,7 @@ export function HeroSection({
               >
                 <Link
                   to={ctaLink}
-                  className="inline-flex w-full sm:w-auto justify-center items-center rounded-full border-2 border-primary bg-black/50 px-8 sm:px-12 py-3 sm:py-4 font-mono text-base sm:text-lg text-primary backdrop-blur-sm transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(45,0,247,0.5)]"
+                  className="inline-flex w-full sm:w-auto justify-center items-center rounded-full border-2 border-primary bg-black/60 px-8 sm:px-12 py-3 sm:py-4 font-mono text-base sm:text-lg text-primary-text backdrop-blur-sm transition-all duration-300 hover:bg-primary/90 hover:text-white hover:border-primary-light hover:shadow-[0_0_20px_rgba(107,76,245,0.6)] focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2 focus:ring-offset-black"
                 >
                   {ctaText}
                 </Link>

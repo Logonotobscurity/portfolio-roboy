@@ -1,5 +1,4 @@
 import React from 'react';
-import type { LucideIcon } from 'lucide-react';
 
 declare module 'lucide-react' {
   export interface LucideProps extends React.SVGAttributes<SVGElement> {
@@ -14,11 +13,11 @@ declare module 'lucide-react' {
 declare global {
   namespace JSX {
     type Element = React.ReactElement;
-    interface ElementClass extends React.Component<any> {
+    interface ElementClass extends React.Component<Record<string, unknown>> {
       render(): React.ReactNode;
     }
     interface ElementAttributesProperty {
-      props: {};
+      props: Record<string, unknown>;
     }
     interface IntrinsicElements {
       div: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
