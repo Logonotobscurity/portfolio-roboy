@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { HOME_ROUTE } from '@/config/route-constants';
 
-export function NotFound(): JSX.Element {
+const NotFound = (): JSX.Element => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-retro-black text-retro-white p-4">
       <motion.div
@@ -22,4 +22,6 @@ export function NotFound(): JSX.Element {
       </motion.div>
     </div>
   );
-} 
+};
+
+export default NotFound; 

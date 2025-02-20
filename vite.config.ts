@@ -21,34 +21,15 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
   return {
     base: env.GITHUB_PAGES === 'true' ? '/portfolioRoboy/' : '/',
     plugins: [
-      isProd && sentryVitePlugin({
-        org: "rooboy",
-        project: "portfolio-roboy",
-        authToken: env.SENTRY_AUTH_TOKEN,
-        sourcemaps: {
-          assets: "./dist/**",
-          ignore: ['node_modules/**', '**/*.css'],
-          filesToDeleteAfterUpload: ['./dist/**/*.map'],
-        },
-        release: {
-          name: `portfolio-roboy@${env.VITE_APP_VERSION}`,
-          setCommits: {
-            auto: true,
-            ignoreMissing: true,
-          },
-        },
-        telemetry: false,
-      }),
       react({
         jsxImportSource: '@emotion/react',
-        plugins: [
-          ['@swc/plugin-emotion', {
-            sourceMap: !isProd,
-            autoLabel: 'dev-only',
-            labelFormat: '[local]',
-          }]
-        ],
       }),
+      // Temporarily disabled Sentry for production build
+      // sentryVitePlugin({
+      //   org: process.env.SENTRY_ORG,
+      //   project: process.env.SENTRY_PROJECT,
+      //   authToken: process.env.SENTRY_AUTH_TOKEN,
+      // }),
       isProd && visualizer({
         filename: 'dist/bundle-stats.html',
         template: 'network',
@@ -74,14 +55,9 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
       rollupOptions: {
         external: [/@rollup\/rollup-linux-.*-gnu/],
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('@sentry')) return 'vendor-sentry';
-              if (id.includes('@radix-ui')) return 'vendor-radix';
-              if (id.includes('framer-motion')) return 'vendor-motion';
-              if (id.includes('@tanstack')) return 'vendor-query';
-              return 'vendor';
-            }
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'framer-motion'],
+            utils: ['@sentry/react', 'zod'],
           },
           assetFileNames: 'assets/[name]-[hash][extname]',
           chunkFileNames: 'js/[name]-[hash].js',
@@ -96,7 +72,7 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
           moduleSideEffects: false,
         },
       },
-      sourcemap: isProd ? 'hidden' : false,
+      sourcemap: isProd ? true : 'inline',
       assetsInlineLimit: 8192,
       chunkSizeWarningLimit: CHUNK_SIZE_WARNING,
       reportCompressedSize: false,

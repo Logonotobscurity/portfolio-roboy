@@ -1,9 +1,10 @@
-import { lazy } from 'react';
+import { lazy, LazyExoticComponent, ComponentType } from 'react';
 
 // Define route types
 interface RouteConfig {
-  path: RoutePath;
-  component: React.LazyExoticComponent<() => JSX.Element>;
+  path: string;
+  component: LazyExoticComponent<ComponentType>;
+  exact?: boolean;
   preload?: () => void;
   children?: RouteConfig[];
 }
@@ -18,16 +19,17 @@ const ROUTE_MODULE_MAP = {
 
 export type RoutePath = keyof typeof ROUTE_MODULE_MAP;
 
-const Home = lazy(() => import('@/pages/home/Home'));
-const Gallery = lazy(() => import('@/pages/gallery/Gallery'));
-const About = lazy(() => import('@/pages/about/About'));
-const Contact = lazy(() => import('@/pages/contact/Contact'));
+const Home = lazy(() => import('../pages/Home').then(module => ({ default: module.default })));
+const Gallery = lazy(() => import('../pages/gallery/Gallery').then(module => ({ default: module.default })));
+const About = lazy(() => import('../pages/about/About').then(module => ({ default: module.default })));
+const Contact = lazy(() => import('../pages/contact/Contact').then(module => ({ default: module.default })));
 
 // Define routes with preloading capability
 export const routes: RouteConfig[] = [
   {
     path: '/',
     component: Home,
+    exact: true,
   },
   {
     path: '/gallery',

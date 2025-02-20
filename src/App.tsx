@@ -1,9 +1,9 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import React, { Suspense as ReactSuspense, lazy as ReactLazy } from 'react';
+import { BrowserRouter, Routes as RouterRoutes, Route as RouterRoute, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { Navigation } from '@/components/ui/navigation/Navigation';
+import Navigation from '@/components/ui/navigation/Navigation';
 import { ErrorBoundary } from '@/components/ui/core/ErrorBoundary';
 import { PageError } from '@/components/PageError';
-import { Suspense, lazy } from 'react';
 import { PageLoading } from '@/components/ui/feedback/PageLoading';
 import { SentryTest } from './components/SentryTest';
 import { ThemeProvider } from './providers/ThemeProvider';
@@ -11,10 +11,10 @@ import { ThemeToggle } from './components/ThemeToggle';
 import './styles/theme.css';
 
 // Lazy load pages
-const Home = lazy(() => import('@/pages/home/Home'));
-const Gallery = lazy(() => import('@/pages/gallery/Gallery'));
-const About = lazy(() => import('@/pages/about/About'));
-const Contact = lazy(() => import('@/pages/contact/Contact'));
+const Home = ReactLazy(() => import('@/pages/home/Home'));
+const Gallery = ReactLazy(() => import('@/pages/gallery/Gallery'));
+const About = ReactLazy(() => import('@/pages/about/About'));
+const Contact = ReactLazy(() => import('@/pages/contact/Contact'));
 
 export default function App() {
   const location = useLocation();
@@ -26,16 +26,16 @@ export default function App() {
           <Navigation />
           
           <main className="flex-1">
-            <Suspense fallback={<PageLoading />}>
+            <ReactSuspense fallback={<PageLoading />}>
               <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/gallery" element={<Gallery />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                </Routes>
+                <RouterRoutes location={location} key={location.pathname}>
+                  <RouterRoute path="/" element={<Home />} />
+                  <RouterRoute path="/gallery" element={<Gallery />} />
+                  <RouterRoute path="/about" element={<About />} />
+                  <RouterRoute path="/contact" element={<Contact />} />
+                </RouterRoutes>
               </AnimatePresence>
-            </Suspense>
+            </ReactSuspense>
           </main>
           <SentryTest />
         </div>

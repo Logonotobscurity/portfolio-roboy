@@ -1,0 +1,73 @@
+name: Health Audit
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
+  workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+
+jobs:
+  health-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Health Audit
+        run: npm run audit:full
+      
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-audit-report
+          path: reports/
+          retention-days: 90
+      
+      - name: Check for Critical Issues
+        run: |
+          if grep -q '"status":"error"' reports/health-audit-report.json; then
+            echo "Critical issues found in health audit!"
+            exit 1
+          fi
+      
+      - name: Create Issue on Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('reports/health-audit-report.json', 'utf8'));
+            
+            const errors = Object.entries(report.results)
+              .flatMap(([category, results]) => 
+                results.filter(r => r.status === 'error')
+                  .map(r => `- **${category}**: ${r.message}`)
+              );
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Critical Issues Found in Health Audit',
+              body: `Health audit found critical issues that need attention:
+
+            ${errors.join('\n')}
+
+            [View full report](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              labels: ['health-audit', 'critical']
+            }); 

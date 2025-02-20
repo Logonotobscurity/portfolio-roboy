@@ -1,8 +1,8 @@
-import { Component, ReactNode } from 'react';
+import React from 'react';haa
 
 interface Props {
-  children: ReactNode;
-  fallback?: (props: { error: Error; resetError: () => void }) => ReactNode;
+  children: React.ReactNode;
+  fallback?: (props: { error: Error; resetError: () => void }) => React.ReactNode;
 }
 
 interface State {
@@ -10,7 +10,7 @@ interface State {
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+export class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -20,11 +20,11 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  resetError = () => {
+  resetError = (): void => {
     this.setState({ hasError: false, error: null });
   };
 
-  override render(): ReactNode {
+  render(): React.ReactNode {
     if (this.state.hasError && this.state.error) {
       if (this.props.fallback) {
         return this.props.fallback({

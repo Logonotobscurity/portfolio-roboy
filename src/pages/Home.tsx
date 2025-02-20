@@ -1,15 +1,15 @@
+import React from 'react';
 import { ResponsiveImage } from '../components/ResponsiveImage';
 
-export function Home() {
+const Home: React.FC = () => {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] pt-24 overflow-hidden">
         <ResponsiveImage
           src="/images/hero/hero-beast.jpg"
-          className="absolute inset-0 w-full h-full"
-          objectFit="cover"
-          // Alt text and priority will be automatically set from metadata
+          alt="RooBoy Hero"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70 flex flex-col items-center justify-center px-4">
           <h1 className="text-white text-4xl md:text-6xl font-bold text-center mb-4">
@@ -48,4 +48,6 @@ export function Home() {
       </section>
     </main>
   );
-} 
+};
+
+export default Home; 

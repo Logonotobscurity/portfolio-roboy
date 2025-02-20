@@ -34,7 +34,10 @@ export default {
         'glitch-1': 'glitch-1 2.5s infinite',
         'glitch-2': 'glitch-2 2.5s infinite',
         'marquee-slow': 'marquee-slow 30s linear infinite',
-        'marquee-slow-reverse': 'marquee-slow-reverse 30s linear infinite'
+        'marquee-slow-reverse': 'marquee-slow-reverse 30s linear infinite',
+        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+        'bounce': 'bounce 1s infinite',
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
       },
       keyframes: {
         gradient: {
@@ -84,6 +87,30 @@ export default {
         'marquee-slow-reverse': {
           '0%': { transform: 'translateX(-50%)' },
           '100%': { transform: 'translateX(0)' }
+        },
+        fadeInUp: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        bounce: {
+          '0%, 100%': {
+            transform: 'translateY(-25%)',
+            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+          },
+          '50%': {
+            transform: 'translateY(0)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+          }
+        },
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '.5' }
         }
       },
       fontFamily: {
@@ -98,6 +125,20 @@ export default {
       },
       gridTemplateColumns: {
         'gallery': 'repeat(auto-fill, minmax(300px, 1fr))',
+      },
+      transitionDelay: {
+        '75': '75ms',
+        '100': '100ms',
+        '150': '150ms',
+        '200': '200ms',
+        '300': '300ms',
+        '400': '400ms',
+        '500': '500ms',
+        '600': '600ms',
+        '700': '700ms',
+        '800': '800ms',
+        '900': '900ms',
+        '1000': '1000ms',
       },
     },
   },

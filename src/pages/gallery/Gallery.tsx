@@ -1,15 +1,12 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, Music, Camera, Film } from 'lucide-react';
 import { SectionContainer } from '@/components/ui/layout/SectionContainer';
-import { SectionHeader } from '@/components/ui/layout/SectionHeader';
-import { SECTION_IDS, SECTION_NAMES } from '@/config/sections';
-import { HeroSection } from '@/components/ui/sections/HeroSection';
 import { MasonryGrid } from '@/components/ui/data-display/MasonryGrid';
-import { PageLoading } from '@/components/ui/feedback/PageLoading';
+import { SECTION_IDS } from '@/config/sections';
+import { ResponsiveImage } from '@/components/ui/media/ResponsiveImage';
 
 // Featured images that will have grayscale effect
-const GRAYSCALE_IMAGES = [
+const _GRAYSCALE_IMAGES = [
   '/images/projects/fashionkiller.jpg',
   '/images/projects/energy.jpg',
   '/images/projects/Recognition.jpg',
@@ -25,14 +22,71 @@ interface ImageData {
   description?: string;
 }
 
-const galleryImages: ImageData[] = [
+const defaultGalleryImages = [
+  // Performance & Entertainment Category
   {
-    src: '/images/gallery/1.jpg',
-    alt: 'Performance at Madison Square Garden',
+    src: '/images/projects/lovethestage.jpg',
+    alt: 'Stage Performance',
     category: 'Performances',
-    featured: true
+    featured: true,
+    description: 'Bringing electric vibes to every performance'
   },
-  // Hero Images
+  {
+    src: '/images/projects/energy.jpg',
+    alt: 'Pure Energy',
+    category: 'Performances',
+    description: 'Electrifying the stage with pure energy'
+  },
+  {
+    src: '/images/projects/iliveforit.jpg',
+    alt: 'Live Performance',
+    category: 'Performances',
+    description: 'Living for the moment on stage'
+  },
+  {
+    src: '/images/projects/action shoot.jpg',
+    alt: 'Action Shot',
+    category: 'Performances',
+    description: 'Capturing the intensity of live performance'
+  },
+  {
+    src: '/images/projects/actionskool.jpg',
+    alt: 'Performance School',
+    category: 'Performances',
+    description: 'Mastering the art of performance'
+  },
+  {
+    src: '/images/projects/activeandready.jpg',
+    alt: 'Ready to Perform',
+    category: 'Performances',
+    description: 'Always ready to take the stage'
+  },
+  // Behind the Scenes Category
+  {
+    src: '/images/projects/ihearsoundanddefinemonemnts.jpg',
+    alt: 'Sound Check',
+    category: 'Behind the Scenes',
+    description: 'Perfecting every detail before the show'
+  },
+  {
+    src: '/images/projects/ihaveallactionon.jpg',
+    alt: 'Action Behind the Scenes',
+    category: 'Behind the Scenes',
+    description: 'Where the magic happens'
+  },
+  {
+    src: '/images/projects/Isharedmoments.jpg',
+    alt: 'Shared Moments',
+    category: 'Behind the Scenes',
+    description: 'Creating memories backstage'
+  },
+  {
+    src: '/images/projects/idefinemoments.jpg',
+    alt: 'Defining Moments',
+    category: 'Behind the Scenes',
+    description: 'The moments that shape the performance'
+  },
+  // Featured Category
   {
     src: '/images/hero/hero-beast.jpg',
     alt: 'RooBoy Hero',
@@ -45,13 +99,21 @@ const galleryImages: ImageData[] = [
     category: 'Featured',
     featured: true
   },
-  // Events Category
   {
-    src: '/images/projects/lovethestage.jpg',
-    alt: 'Stage Energy',
-    category: 'Events',
-    description: 'Bringing electric vibes to every performance'
+    src: '/images/projects/kingRoored.jpg',
+    alt: 'King RooBoy',
+    category: 'Featured',
+    featured: true,
+    description: 'Ruling the stage with presence'
   },
+  {
+    src: '/images/projects/declacaredRoo.jpg',
+    alt: 'Declared RooBoy',
+    category: 'Featured',
+    featured: true,
+    description: 'Making statements that matter'
+  },
+  // Events Category
   {
     src: '/images/projects/smirnoffcallings.jpg',
     alt: 'Smirnoff Collaboration',
@@ -85,6 +147,18 @@ const galleryImages: ImageData[] = [
     category: 'Fashion'
   },
   {
+    src: '/images/projects/fashionpose.jpg',
+    alt: 'Fashion Pose',
+    category: 'Fashion',
+    description: 'Striking the perfect pose'
+  },
+  {
+    src: '/images/projects/highvogue.jpg',
+    alt: 'Vogue Style',
+    category: 'Fashion',
+    description: 'High fashion moments'
+  },
+  {
     src: '/images/projects/cultralswag.jpg',
     alt: 'Cultural Swag',
     category: 'Fashion'
@@ -100,9 +174,10 @@ const galleryImages: ImageData[] = [
     category: 'Fashion'
   },
   {
-    src: '/images/projects/welovefashion.jpg',
-    alt: 'Fashion Love',
-    category: 'Fashion'
+    src: '/images/projects/bluehead.jpg',
+    alt: 'Blue Aesthetic',
+    category: 'Fashion',
+    description: 'Exploring color in fashion'
   },
   // Brand Activations
   {
@@ -142,11 +217,6 @@ const galleryImages: ImageData[] = [
     category: 'MC'
   },
   // Entertainment & Performance
-  {
-    src: '/images/projects/energy.jpg',
-    alt: 'Pure Energy',
-    category: 'Entertainment'
-  },
   {
     src: '/images/projects/RooKingdom.jpg',
     alt: 'RooBoy Kingdom',
@@ -202,148 +272,217 @@ const galleryImages: ImageData[] = [
     alt: 'RooBoy Foundation',
     category: 'Philanthropy',
     description: 'Building a better future together'
+  },
+  // Additional Performance & Stage images
+  {
+    src: '/images/projects/Letsdiveintobusiness.jpg',
+    alt: 'Business Side',
+    category: 'Behind the Scenes',
+    description: 'The professional aspect of entertainment'
+  },
+  {
+    src: '/images/projects/ladiesloveRoo.jpg',
+    alt: 'Fan Appreciation',
+    category: 'Events',
+    description: 'Connecting with the audience'
+  },
+  {
+    src: '/images/projects/kngback.jpg',
+    alt: 'Return of the King',
+    category: 'Featured',
+    description: 'Making a grand return'
+  },
+  {
+    src: '/images/projects/forthelove.jpg',
+    alt: 'For the Love',
+    category: 'Performances',
+    description: 'Performing with passion'
   }
-] as const;
-
-const categories = [
-  { value: 'all', label: 'All' },
-  { value: 'Events', label: 'Events' },
-  { value: 'Fashion', label: 'Fashion' },
-  { value: 'Brands', label: 'Brands' },
-  { value: 'MC', label: 'MC Services' },
-  { value: 'Entertainment', label: 'Entertainment' },
-  { value: 'Awards', label: 'Awards' },
-  { value: 'Philanthropy', label: 'Philanthropy' }
-];
+] satisfies ImageData[];
 
 interface LightboxProps {
   image: ImageData | null;
   onClose: () => void;
 }
 
-function Lightbox({ image, onClose }: LightboxProps) {
+const Lightbox = ({ image, onClose }: LightboxProps): JSX.Element | null => {
   if (!image) return null;
-
+  
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-white hover:text-gray-300"
+        aria-label="Close lightbox"
       >
-        <motion.button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-white hover:text-primary"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <X size={24} />
-        </motion.button>
-        <motion.img
+        <X size={24} />
+      </button>
+      <div className="max-w-4xl w-full">
+        <img
           src={image.src}
           alt={image.alt}
-          className="max-h-[90vh] max-w-[90vw] object-contain"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.3 }}
+          className="w-full h-auto max-h-[80vh] object-contain"
         />
-        <motion.div
-          className="absolute bottom-4 left-4 text-white"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h3 className="text-2xl font-bold">{image.alt}</h3>
-          <p className="text-retro-gray">{image.category}</p>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+        <div className="mt-4 text-white">
+          <h2 className="text-xl font-bold">{image.alt}</h2>
+          {image.description && <p className="mt-2">{image.description}</p>}
+        </div>
+      </div>
+    </div>
   );
-}
+};
 
-const Gallery = () => {
+const LoadingAnimation = () => (
+  <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+    <div className="relative">
+      {/* Animated circles */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-32 h-32 border-4 border-primary rounded-full animate-pulse opacity-20" />
+        <div className="absolute w-24 h-24 border-4 border-primary-light rounded-full animate-pulse delay-75 opacity-40" />
+        <div className="absolute w-16 h-16 border-4 border-white rounded-full animate-pulse delay-150 opacity-60" />
+      </div>
+      
+      {/* Animated icons */}
+      <div className="relative flex gap-6">
+        <Music className="w-8 h-8 text-white animate-bounce" />
+        <Camera className="w-8 h-8 text-white animate-bounce delay-100" />
+        <Film className="w-8 h-8 text-white animate-bounce delay-200" />
+      </div>
+      
+      {/* Loading text */}
+      <div className="mt-8 text-center">
+        <p className="text-white text-lg font-medium animate-pulse">
+          Loading Gallery
+        </p>
+        <p className="text-white/60 text-sm mt-2">
+          Preparing your visual experience
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+const Gallery = (): JSX.Element => {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [images, setImages] = useState<ImageData[]>([]);
 
-  useEffect(() => {
-    // Simulate loading time for images
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const categories = [
+    'All',
+    'Performances',
+    'Behind the Scenes',
+    'Featured',
+    'Events',
+    'Fashion',
+    'Brands',
+    'MC',
+    'Awards',
+    'Philanthropy'
+  ] as const;
 
   const filteredImages = useMemo(() => {
-    return selectedCategory === 'all'
-      ? galleryImages
-      : galleryImages.filter(img => img.category === selectedCategory);
-  }, [selectedCategory]);
+    return selectedCategory === 'All'
+      ? images
+      : images.filter(img => img.category === selectedCategory);
+  }, [selectedCategory, images]);
 
-  const handleImageClick = useCallback((image: ImageData) => {
-    setSelectedImage(image);
+  // Preload critical images
+  useEffect(() => {
+    const preloadImages = async () => {
+      try {
+        // Preload hero and featured images first
+        const criticalImages = defaultGalleryImages
+          .filter(img => img.featured)
+          .map(img => img.src);
+
+        // Create an array of image loading promises
+        const imagePromises = criticalImages.map(src => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+        });
+
+        // Wait for critical images to load
+        await Promise.all(imagePromises);
+        
+        // Set all images and remove loading state
+        setImages(defaultGalleryImages);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error preloading images:', error);
+        // Still show gallery even if some images fail to preload
+        setImages(defaultGalleryImages);
+        setIsLoading(false);
+      }
+    };
+
+    preloadImages();
   }, []);
 
   if (isLoading) {
-    return <PageLoading />;
+    return <LoadingAnimation />;
   }
 
   return (
-    <div className="min-h-screen bg-retro-black text-retro-white">
-      <HeroSection
-        title="VISUAL JOURNEY"
-        subtitle="| CAPTURING MOMENTS & CREATING MEMORIES |"
-        description="Explore the moments that define RooBoy's presence in events, fashion, and entertainment"
-        backgroundImage="/images/hero/hero-beast.jpg"
-        pattern="kente"
-        height="large"
-        align="left"
-        contentWidth="normal"
-        withGlitch={true}
-      />
-      
-      {/* Categories */}
-      <SectionContainer id={SECTION_IDS.CATEGORIES} pattern="grid">
-        <SectionHeader
-          title={SECTION_NAMES[SECTION_IDS.CATEGORIES]}
-          subtitle="Browse through different aspects of my work"
-        />
-        <div className="scrollbar-none -mx-4 px-4 pb-4 flex overflow-x-auto sm:overflow-x-visible sm:mx-0 sm:px-0 sm:pb-0 sm:flex-wrap sm:justify-center gap-3 sm:gap-4">
+    <>
+      {/* Hero Section */}
+      <SectionContainer id={SECTION_IDS.GALLERY_HERO} className="relative min-h-[60vh] overflow-hidden">
+        <div className="absolute inset-0">
+          <ResponsiveImage
+            src="/images/hero/hero-beast.jpg"
+            alt="Gallery Hero"
+            className="w-full h-full object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
+        </div>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 py-20">
+          <div className="animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Gallery & Portfolio
+            </h1>
+          </div>
+          <div className="animate-fade-in-up delay-200">
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl">
+              Explore the visual journey of performances, events, and memorable moments
+            </p>
+          </div>
+        </div>
+      </SectionContainer>
+
+      {/* Gallery Grid Section */}
+      <SectionContainer id={SECTION_IDS.GALLERY_GRID} className="bg-gradient-to-b from-black to-gray-900 text-white py-16">
+        <div className="flex justify-center space-x-4 mb-8">
           {categories.map(category => (
-            <motion.button
-              key={category.value}
-              onClick={() => setSelectedCategory(category.value)}
-              className={`shrink-0 px-4 sm:px-6 py-2 rounded-full border-2 font-mono text-sm sm:text-base transition-all duration-300 ${
-                selectedCategory === category.value
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-primary/30 text-white hover:border-primary'
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                selectedCategory === category
+                  ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                  : 'bg-white/10 hover:bg-white/20 text-white'
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              {category.label}
-            </motion.button>
+              {category}
+            </button>
           ))}
         </div>
+
+        <MasonryGrid
+          images={filteredImages}
+          onImageClick={image => setSelectedImage(image)}
+        />
       </SectionContainer>
 
-      {/* Gallery Grid */}
-      <SectionContainer id={SECTION_IDS.GALLERY_GRID} pattern="grid" className="mt-8 sm:mt-12">
-        <div className="px-2 sm:px-4">
-          <MasonryGrid
-            images={filteredImages}
-            onImageClick={handleImageClick}
-            grayscaleImages={GRAYSCALE_IMAGES}
-          />
-        </div>
-      </SectionContainer>
-
-      {/* Lightbox */}
-      <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />
-    </div>
+      {selectedImage && (
+        <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />
+      )}
+    </>
   );
-}
+};
 
 export default Gallery;
