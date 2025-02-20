@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const INPUT_DIR = path.join(path.dirname(__dirname), 'src/assets/images');
-const OUTPUT_DIR = path.join(path.dirname(__dirname), 'public/images');
+const OUTPUT_DIR = path.join(path.dirname(__dirname), 'public/images/optimized');
 
 const FORMATS = ['webp', 'avif', 'jpg'];
 const SIZES = {
@@ -60,29 +60,41 @@ async function processImages() {
     // Ensure output directory exists
     await fs.mkdir(OUTPUT_DIR, { recursive: true });
 
-    // Get all images from input directory
-    const files = await fs.readdir(INPUT_DIR);
-    const imageFiles = files.filter(file => 
-      /\.(jpg|jpeg|png|gif)$/i.test(file)
+    // Get all images from input directory recursively
+    async function getFiles(dir) {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+      const files = await Promise.all(entries.map(entry => {
+        const res = path.resolve(dir, entry.name);
+        return entry.isDirectory() ? getFiles(res) : res;
+      }));
+      return files.flat();
+    }
+
+    const allFiles = await getFiles(INPUT_DIR);
+    const imageFiles = allFiles.filter(file => 
+      /\.(jpg|jpeg|png|gif|webp|avif)$/i.test(file)
     );
 
     console.log(`🔍 Found ${imageFiles.length} images to optimize`);
 
     // Process each image in all formats and sizes
-    const optimizationPromises = imageFiles.flatMap(file => {
-      const inputPath = path.join(INPUT_DIR, file);
-      const baseName = path.parse(file).name;
+    const optimizationPromises = imageFiles.map(file => {
+      const relativePath = path.relative(INPUT_DIR, file);
+      const baseName = path.parse(relativePath).name;
+      const dirName = path.dirname(relativePath);
       
       return FORMATS.flatMap(format => 
         Object.entries(SIZES).map(([sizeName, dimensions]) => {
           const outputFileName = `${baseName}-${sizeName}.${format}`;
-          const outputPath = path.join(OUTPUT_DIR, outputFileName);
-          return optimizeImage(inputPath, outputPath, format, dimensions);
+          const outputPath = path.join(OUTPUT_DIR, dirName, outputFileName);
+          // Ensure output directory exists
+          fs.mkdir(path.dirname(outputPath), { recursive: true });
+          return optimizeImage(file, outputPath, format, dimensions);
         })
       );
     });
 
-    await Promise.all(optimizationPromises);
+    await Promise.all(optimizationPromises.flat());
     console.log('✨ Image optimization complete!');
   } catch (error) {
     console.error('❌ Error processing images:', error);

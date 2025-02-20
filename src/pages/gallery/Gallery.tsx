@@ -4,6 +4,8 @@ import { SectionContainer } from '@/components/ui/layout/SectionContainer';
 import { MasonryGrid } from '@/components/ui/data-display/MasonryGrid';
 import { SECTION_IDS } from '@/config/sections';
 import { ResponsiveImage } from '@/components/ui/media/ResponsiveImage';
+import { ImagePaths, GRAYSCALE_IMAGES } from '@/config/imagePaths';
+import { getAssetPath } from '@/utils/assetUtils';
 
 // Featured images that will have grayscale effect
 const _GRAYSCALE_IMAGES = [
@@ -25,89 +27,89 @@ interface ImageData {
 const defaultGalleryImages = [
   // Performance & Entertainment Category
   {
-    src: '/images/projects/lovethestage.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.loveStage),
     alt: 'Stage Performance',
     category: 'Performances',
     featured: true,
     description: 'Bringing electric vibes to every performance'
   },
   {
-    src: '/images/projects/energy.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.energy),
     alt: 'Pure Energy',
     category: 'Performances',
     description: 'Electrifying the stage with pure energy'
   },
   {
-    src: '/images/projects/iliveforit.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.iliveforit),
     alt: 'Live Performance',
     category: 'Performances',
     description: 'Living for the moment on stage'
   },
   {
-    src: '/images/projects/action shoot.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.actionShoot),
     alt: 'Action Shot',
     category: 'Performances',
     description: 'Capturing the intensity of live performance'
   },
   {
-    src: '/images/projects/actionskool.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.actionskool),
     alt: 'Performance School',
     category: 'Performances',
     description: 'Mastering the art of performance'
   },
   {
-    src: '/images/projects/activeandready.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.activeAndReady),
     alt: 'Ready to Perform',
     category: 'Performances',
     description: 'Always ready to take the stage'
   },
   // Behind the Scenes Category
   {
-    src: '/images/projects/ihearsoundanddefinemonemnts.jpg',
+    src: getAssetPath(ImagePaths.projects.behindTheScenes.hearSoundAndDefineMonemnts),
     alt: 'Sound Check',
     category: 'Behind the Scenes',
     description: 'Perfecting every detail before the show'
   },
   {
-    src: '/images/projects/ihaveallactionon.jpg',
+    src: getAssetPath(ImagePaths.projects.behindTheScenes.haveAllActionOn),
     alt: 'Action Behind the Scenes',
     category: 'Behind the Scenes',
     description: 'Where the magic happens'
   },
   {
-    src: '/images/projects/Isharedmoments.jpg',
+    src: getAssetPath(ImagePaths.projects.behindTheScenes.sharedMoments),
     alt: 'Shared Moments',
     category: 'Behind the Scenes',
     description: 'Creating memories backstage'
   },
   {
-    src: '/images/projects/idefinemoments.jpg',
+    src: getAssetPath(ImagePaths.projects.behindTheScenes.defineMoments),
     alt: 'Defining Moments',
     category: 'Behind the Scenes',
     description: 'The moments that shape the performance'
   },
   // Featured Category
   {
-    src: '/images/hero/hero-beast.jpg',
+    src: getAssetPath(ImagePaths.hero.beast),
     alt: 'RooBoy Hero',
     category: 'Featured',
     featured: true
   },
   {
-    src: '/images/hero/hero-.jpg',
+    src: getAssetPath(ImagePaths.hero.spotlight),
     alt: 'RooBoy Spotlight',
     category: 'Featured',
     featured: true
   },
   {
-    src: '/images/projects/kingRoored.jpg',
+    src: getAssetPath(ImagePaths.projects.featured.kingRoored),
     alt: 'King RooBoy',
     category: 'Featured',
     featured: true,
     description: 'Ruling the stage with presence'
   },
   {
-    src: '/images/projects/declacaredRoo.jpg',
+    src: getAssetPath(ImagePaths.projects.featured.declacaredRoo),
     alt: 'Declared RooBoy',
     category: 'Featured',
     featured: true,
@@ -115,185 +117,185 @@ const defaultGalleryImages = [
   },
   // Events Category
   {
-    src: '/images/projects/smirnoffcallings.jpg',
+    src: getAssetPath(ImagePaths.projects.events.smirnoff),
     alt: 'Smirnoff Collaboration',
     category: 'Events',
     description: 'Creating unforgettable brand moments'
   },
   {
-    src: '/images/projects/eventkiller.jpg',
+    src: getAssetPath(ImagePaths.projects.events.killer),
     alt: 'Event Mastery',
     category: 'Events'
   },
   {
-    src: '/images/projects/momentsonstage.jpg',
+    src: getAssetPath(ImagePaths.projects.events.momentsOnStage),
     alt: 'Stage Presence',
     category: 'Events'
   },
   {
-    src: '/images/projects/event.jpg',
+    src: getAssetPath(ImagePaths.projects.events.event),
     alt: 'Live Events',
     category: 'Events'
   },
   // Fashion Category
   {
-    src: '/images/projects/fashionkiller.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.killer),
     alt: 'Fashion Forward',
     category: 'Fashion'
   },
   {
-    src: '/images/projects/fashionspeaks.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.speaks),
     alt: 'Style Statement',
     category: 'Fashion'
   },
   {
-    src: '/images/projects/fashionpose.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.pose),
     alt: 'Fashion Pose',
     category: 'Fashion',
     description: 'Striking the perfect pose'
   },
   {
-    src: '/images/projects/highvogue.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.highVogue),
     alt: 'Vogue Style',
     category: 'Fashion',
     description: 'High fashion moments'
   },
   {
-    src: '/images/projects/cultralswag.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.cultralswag),
     alt: 'Cultural Swag',
     category: 'Fashion'
   },
   {
-    src: '/images/projects/Fashionhost.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.host),
     alt: 'Fashion Host',
     category: 'Fashion'
   },
   {
-    src: '/images/projects/fashoionornothing.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.fashoionornothing),
     alt: 'Fashion is Everything',
     category: 'Fashion'
   },
   {
-    src: '/images/projects/bluehead.jpg',
+    src: getAssetPath(ImagePaths.projects.fashion.bluehead),
     alt: 'Blue Aesthetic',
     category: 'Fashion',
     description: 'Exploring color in fashion'
   },
   // Brand Activations
   {
-    src: '/images/projects/rooforsmirnodff.jpg',
+    src: getAssetPath(ImagePaths.projects.brands.smirnoffPartnership),
     alt: 'Smirnoff Partnership',
     category: 'Brands'
   },
   {
-    src: '/images/projects/madesmirnoffamoment.jpg',
+    src: getAssetPath(ImagePaths.projects.brands.moments),
     alt: 'Brand Moments',
     category: 'Brands'
   },
   {
-    src: '/images/projects/stillonsmirnoff.jpg',
+    src: getAssetPath(ImagePaths.projects.brands.stillonsmirnoff),
     alt: 'Smirnoff Vibes',
     category: 'Brands'
   },
   {
-    src: '/images/projects/madehumanasmirnoff.jpg',
+    src: getAssetPath(ImagePaths.projects.brands.madeHumanAsSmirnoff),
     alt: 'Human Connection',
     category: 'Brands'
   },
   // MC Services
   {
-    src: '/images/projects/MChonor.jpg',
+    src: getAssetPath(ImagePaths.projects.mc.honor),
     alt: 'MC Excellence',
     category: 'MC'
   },
   {
-    src: '/images/projects/headofstate.jpg',
+    src: getAssetPath(ImagePaths.projects.mc.headOfState),
     alt: 'High Profile Events',
     category: 'MC'
   },
   {
-    src: '/images/projects/Momentswithclebrity .jpg',
+    src: getAssetPath(ImagePaths.projects.mc.momentsWithCelebrity),
     alt: 'Celebrity Moments',
     category: 'MC'
   },
   // Entertainment & Performance
   {
-    src: '/images/projects/RooKingdom.jpg',
+    src: getAssetPath(ImagePaths.projects.entertainment.rooKingdom),
     alt: 'RooBoy Kingdom',
     category: 'Entertainment'
   },
   {
-    src: '/images/projects/Sharingmonemnts.jpg',
+    src: getAssetPath(ImagePaths.projects.entertainment.sharingMoments),
     alt: 'Shared Moments',
     category: 'Entertainment'
   },
   {
-    src: '/images/projects/birdsareupforme.jpg',
+    src: getAssetPath(ImagePaths.projects.entertainment.birdsAreUpForMe),
     alt: 'Birds Eye View',
     category: 'Entertainment'
   },
   // Awards & Recognition
   {
-    src: '/images/projects/Recognition.jpg',
+    src: getAssetPath(ImagePaths.projects.awards.recognition),
     alt: 'Industry Recognition',
     category: 'Awards'
   },
   {
-    src: '/images/projects/Awardmoments.jpg',
+    src: getAssetPath(ImagePaths.projects.awards.ceremony),
     alt: 'Award Ceremony',
     category: 'Awards'
   },
   {
-    src: '/images/projects/Award Speech .jpg',
+    src: getAssetPath(ImagePaths.projects.awards.speech),
     alt: 'Acceptance Speech',
     category: 'Awards'
   },
   // Philanthropy
   {
-    src: '/images/philantrophy/rooboy foundation3.jpg',
-    alt: 'Foundation Work',
+    src: getAssetPath(ImagePaths.philanthropy.foundation.main),
+    alt: 'RooBoy Foundation',
     category: 'Philanthropy',
-    description: 'Making a difference in our community'
+    description: 'Building a better future together'
   },
   {
-    src: '/images/philantrophy/Philantophy.jpg',
+    src: getAssetPath(ImagePaths.philanthropy.impact),
     alt: 'Community Impact',
     category: 'Philanthropy',
     description: 'Creating positive change through action'
   },
   {
-    src: '/images/philantrophy/rooboy foundation 2.jpg',
+    src: getAssetPath(ImagePaths.philanthropy.youthEmpowerment),
     alt: 'Youth Empowerment',
     category: 'Philanthropy',
     description: 'Inspiring the next generation'
   },
   {
-    src: '/images/philantrophy/Rooboy foundation.jpg',
-    alt: 'RooBoy Foundation',
+    src: getAssetPath(ImagePaths.philanthropy.foundation.foundation),
+    alt: 'Foundation Work',
     category: 'Philanthropy',
-    description: 'Building a better future together'
+    description: 'Making a difference in our community'
   },
   // Additional Performance & Stage images
   {
-    src: '/images/projects/Letsdiveintobusiness.jpg',
+    src: getAssetPath(ImagePaths.projects.behindTheScenes.letsDiveIntoBusiness),
     alt: 'Business Side',
     category: 'Behind the Scenes',
     description: 'The professional aspect of entertainment'
   },
   {
-    src: '/images/projects/ladiesloveRoo.jpg',
+    src: getAssetPath(ImagePaths.projects.events.ladiesLoveRoo),
     alt: 'Fan Appreciation',
     category: 'Events',
     description: 'Connecting with the audience'
   },
   {
-    src: '/images/projects/kngback.jpg',
+    src: getAssetPath(ImagePaths.projects.featured.kngback),
     alt: 'Return of the King',
     category: 'Featured',
     description: 'Making a grand return'
   },
   {
-    src: '/images/projects/forthelove.jpg',
+    src: getAssetPath(ImagePaths.projects.performance.fortheLove),
     alt: 'For the Love',
     category: 'Performances',
     description: 'Performing with passion'
@@ -433,7 +435,7 @@ const Gallery = (): JSX.Element => {
       <SectionContainer id={SECTION_IDS.GALLERY_HERO} className="relative min-h-[60vh] overflow-hidden">
         <div className="absolute inset-0">
           <ResponsiveImage
-            src="/images/hero/hero-beast.jpg"
+            src={getAssetPath(ImagePaths.hero.beast)}
             alt="Gallery Hero"
             className="w-full h-full object-cover"
             priority
