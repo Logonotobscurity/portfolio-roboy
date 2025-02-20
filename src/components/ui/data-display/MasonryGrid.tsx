@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { ResponsiveImage } from '@/components/ui/media/ResponsiveImage';
 
 // Add debounce utility
 function debounce<T extends (...args: unknown[]) => unknown>(
@@ -33,10 +33,9 @@ export function MasonryGrid({ images, onImageClick, grayscaleImages = [] }: Maso
 
   useEffect(() => {
     function updateColumns() {
-      const element = gridRef.current;
-      if (!element) return;
-
-      const width = element.clientWidth;
+      const width = gridRef.current?.clientWidth ?? 0;
+      if (width === 0) return;
+      
       if (width < 640) setColumns(1);
       else if (width < 1024) setColumns(2);
       else setColumns(3);
@@ -49,44 +48,41 @@ export function MasonryGrid({ images, onImageClick, grayscaleImages = [] }: Maso
     return () => window.removeEventListener('resize', debouncedUpdateColumns);
   }, []);
 
-  const getColumns = () => {
-    const cols: ImageData[][] = Array.from({ length: columns }, () => []);
-    images.forEach((image, i) => {
-      cols[i % columns].push(image);
-    });
-    return cols;
-  };
+  const columnData = Array.from({ length: columns }, (_, columnIndex) => 
+    images.filter((_, index) => index % columns === columnIndex)
+  );
 
   return (
     <div
       ref={gridRef}
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4"
     >
-      {getColumns().map((column, colIndex) => (
+      {columnData.map((column, colIndex) => (
         <div key={colIndex} className="flex flex-col gap-4">
           {column.map((image, imageIndex) => (
-            <motion.div
+            <div
               key={`${colIndex}-${imageIndex}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ delay: (colIndex * column.length + imageIndex) * 0.1 }}
-              className="relative group"
+              className="relative group opacity-0 animate-fadeIn"
+              style={{
+                animationDelay: `${(colIndex * column.length + imageIndex) * 100}ms`,
+                animationFillMode: 'forwards'
+              }}
             >
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="relative overflow-hidden rounded-lg aspect-[3/4]"
+              <div
+                className="relative overflow-hidden rounded-lg aspect-[3/4] cursor-pointer transform transition-transform duration-200 hover:scale-102"
                 onClick={() => onImageClick(image)}
               >
-                <img
+                <ResponsiveImage
                   src={image.src}
                   alt={image.alt}
-                  className={`w-full h-full object-cover transition-all duration-500 ${
+                  className={`w-full h-full transition-all duration-500 ${
                     grayscaleImages.includes(image.src)
                       ? 'grayscale hover:grayscale-0'
                       : ''
                   }`}
+                  objectFit="cover"
+                  loading="lazy"
+                  priority={image.featured}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -95,8 +91,8 @@ export function MasonryGrid({ images, onImageClick, grayscaleImages = [] }: Maso
                     <p className="text-gray-200 text-sm mt-1">{image.description}</p>
                   )}
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           ))}
         </div>
       ))}

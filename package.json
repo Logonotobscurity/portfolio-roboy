@@ -25,6 +25,7 @@
     "check:deps": "npm outdated --long",
     "generate:sitemap": "node scripts/sitemap-generator.js",
     "optimize:images": "node scripts/image-optimizer.js",
+    "upload:assets": "node scripts/cloudinary-upload.js",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "deploy:prod": "netlify deploy --prod",
@@ -37,6 +38,8 @@
     "audit:full": "npm-run-all --parallel check:* audit:health"
   },
   "dependencies": {
+    "@cloudinary/react": "1.13.1",
+    "@cloudinary/url-gen": "1.21.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@sentry/react": "^7.101.1",
@@ -93,8 +96,10 @@
     "@vitejs/plugin-react-swc": "3.8.0",
     "autoprefixer": "10.4.20",
     "caniuse-lite": "1.0.30001700",
+    "cloudinary": "2.5.1",
     "cross-env": "^7.0.3",
     "cssnano": "7.0.6",
+    "dotenv": "16.4.7",
     "eslint": "8.45.0",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",

@@ -8,7 +8,7 @@ export const ImagePaths = {
       loveStage: '/images/projects/lovethestage.jpg',
       energy: '/images/projects/energy.jpg',
       iliveforit: '/images/projects/iliveforit.jpg',
-      actionShoot: '/images/projects/action shoot.jpg',
+      actionShoot: '/images/projects/action-shoot.jpg',
       actionskool: '/images/projects/actionskool.jpg',
       activeAndReady: '/images/projects/activeandready.jpg',
       fortheLove: '/images/projects/forthelove.jpg'
@@ -51,7 +51,7 @@ export const ImagePaths = {
     mc: {
       honor: '/images/projects/MChonor.jpg',
       headOfState: '/images/projects/headofstate.jpg',
-      momentsWithCelebrity: '/images/projects/Momentswithclebrity .jpg'
+      momentsWithCelebrity: '/images/projects/Momentswithcelebrity.jpg'
     },
     entertainment: {
       rooKingdom: '/images/projects/RooKingdom.jpg',
@@ -61,16 +61,16 @@ export const ImagePaths = {
     awards: {
       recognition: '/images/projects/Recognition.jpg',
       ceremony: '/images/projects/Awardmoments.jpg',
-      speech: '/images/projects/Award Speech .jpg'
+      speech: '/images/projects/Award-Speech.jpg'
     }
   },
   philanthropy: {
     foundation: {
-      main: '/images/philantrophy/rooboy foundation3.jpg',
-      foundation: '/images/philantrophy/Rooboy foundation.jpg'
+      main: '/images/philantrophy/rooboy-foundation3.jpg',
+      foundation: '/images/philantrophy/Rooboy-foundation.jpg'
     },
     impact: '/images/philantrophy/Philantophy.jpg',
-    youthEmpowerment: '/images/philantrophy/rooboy foundation 2.jpg'
+    youthEmpowerment: '/images/philantrophy/rooboy-foundation-2.jpg'
   }
 } as const;
 

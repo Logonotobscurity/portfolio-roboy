@@ -19,7 +19,7 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => {
   const isProd = mode === 'production';
   
   return {
-    base: env.GITHUB_PAGES === 'true' ? '/portfolioRoboy/' : '/',
+    base: '/portfolio-roboy/',
     plugins: [
       react({
         jsxImportSource: '@emotion/react',
